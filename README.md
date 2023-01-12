@@ -1,12 +1,12 @@
 # CACIC Use Case
 
-![alt text](https://github.com/GTA-UFRJ/CACIC-Use-Case/tree/main/docs-resources/logo_cacic.png?raw=true)
+![ScreenShot](docs-resources/logo_cacic.png?raw=true)
 
 CACIC (Trusted Access Control for Internet of Things Data in Clouds using Enclaves) is an architechture proposed in [1] and extensively evaluated in [2]. It leverages memory enclaves for customizing access permissions for IoT data in remote clouds, even if high privileged software (such as the OS) is compromised.
 
 This repository demonstrates a Smart Grid use case, in which, with the help of an  IoT Access Point, Smart Meters publish energy consumption samples. Using a Management Application, users can query data or ask the server to publish data after applying more complex processings, such as aggregation or load forecasting.
 
-![alt text](https://github.com/GTA-UFRJ/CACIC-Use-Case/tree/main/docs-resources/arquitechture.png?raw=true)
+![ScreenShot](docs-resources/arquitechture.png?raw=true)
 
 ## Requisites
 
@@ -54,7 +54,7 @@ To open the client GUI tool, run the command:
 ```
 ./CACIC-GUI
 ```
-![alt text](https://github.com/GTA-UFRJ/CACIC-Use-Case/tree/main/docs-resources/app_windows_example.png?raw=true)
+![ScreenShot](docs-resources/app_windows_example.png?raw=true)
 
 Before sending publication and query messages, it is necessary to configure the client. The required steps can be done using the CLI or GUI tools, as follows:
 
@@ -80,7 +80,7 @@ The following four components are necessary to run our demo:
 
 http://[access_point_url]:5555/smart-meter=[payload]
 
-![alt text](https://github.com/GTA-UFRJ/CACIC-Use-Case/tree/main/docs-resources/smart_meter.jpg?raw=true)
+![ScreenShot](docs-resources/smart_meter.jpg?raw=true)
 
 * A Linux Access Point (AP) running the process ```./Client ap_init```
 * A Linux User Equipment (UE) running the GUI (or CLI) Management Application, built with the steps above
