@@ -92,6 +92,6 @@ Video Link: **comming soon**
 
 [1] THOMAZ, Guilherme A.; GUERRA, Matheus B.; SAMMARCO, Matteo; CAMPISTA, Miguel Elias M.. CACIC: Controle de Acesso Confiável Usando Enclaves a Dados em Nuvem da Internet das Coisas. In: SIMPÓSIO BRASILEIRO DE REDES DE COMPUTADORES E SISTEMAS DISTRIBUÍDOS (SBRC), 40. , 2022, Fortaleza. Anais [...]. Porto Alegre: Sociedade Brasileira de Computação, 2022 . p. 573-586. ISSN 2177-9384. DOI: https://doi.org/10.5753/sbrc.2022.222377.
 
-[2] THOMAZ, Guilherme A.; GUERRA, Matheus B.; SAMMARCO, Matteo; DETYNIECKI, Marcin; CAMPISTA, Miguel Elias M..  Tamper-proof Access Control for IoT Clouds Using Enclaves. Electrical Engineering Program, COPPE/UFRJ,  2022. Technical Report. (Under review process in Ad Hoc Networks Journal)
+[2] THOMAZ, Guilherme A.; GUERRA, Matheus B.; SAMMARCO, Matteo; DETYNIECKI, Marcin; CAMPISTA, Miguel Elias M..  Tamper-proof Access Control for IoT Clouds Using Enclaves. Electrical Engineering Program, COPPE/UFRJ,  2022. Technical Report (Under review process in Ad Hoc Networks Journal). URL: https://www.gta.ufrj.br/ftp/gta/TechReports/TGS23.pdf.
 
-[3] THOMAZ, Guilherme A.; GUERRA, Matheus B.; SAMMARCO, Matteo; DETYNIECKI, Marcin; CAMPISTA, Miguel Elias M..  Customizable Access Policies using Enclaves: Demonstrating a Smart Grid Use Case. (Under submission process in IEEE INFOCOM 2023-IEEE Conference on Computer Communications Workshops)
+[3] THOMAZ, Guilherme A.; GUERRA, Matheus B.; SAMMARCO, Matteo; CAMPISTA, Miguel Elias M..  Customizable Access Policies using Enclaves: Demonstrating a Smart Grid Use Case. (Under submission process in IEEE INFOCOM 2023-IEEE Conference on Computer Communications Workshops).
