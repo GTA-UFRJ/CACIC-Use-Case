@@ -6,7 +6,7 @@ CACIC (Trusted Access Control for Internet of Things Data in Clouds using Enclav
 
 This repository demonstrates a Smart Grid use case, in which, with the help of an  IoT Access Point, Smart Meters publish energy consumption samples. Using a Management Application, users can query data or ask the server to publish data after applying more complex processings, such as aggregation or load forecasting.
 
-![ScreenShot](docs-resources/arquitechture.png?raw=true)
+![ScreenShot](docs-resources/arquitecture.png?raw=true)
 
 ## Requisites
 
