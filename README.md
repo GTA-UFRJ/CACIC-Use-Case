@@ -31,9 +31,9 @@ After installing SGX:
 
 There are three tools: the server, the command line client tool, and the graphical user interface client tool, which are built with the related commands:
 ```
-bash ./build-server-script.sh
-bash ./build-cli-script.sh
-bash ./build-gui-script.sh
+bash ./install-server.sh [SGX include path] [httplib path]
+bash ./install-cli.sh [httplib path]
+bash ./install-gui.sh [httplib path]
 ```
 
 ## Execution
