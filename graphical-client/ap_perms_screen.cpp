@@ -1,7 +1,7 @@
 #include "ap_perms_screen.h"
 #include "ui_ap_perms_screen.h"
 #include "result_screen.h"
-#include "client_generic_interface_dumb.h"
+#include "client_generic_interface.h"
 #include "config_macros.h"
 
 #include <iostream>

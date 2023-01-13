@@ -2,7 +2,7 @@
 #include "ui_register_ap_screen.h"
 #include "result_screen.h"
 #include <iostream>
-#include "client_generic_interface_dumb.h"
+#include "client_generic_interface.h"
 #include "config_macros.h"
 
 #include <QLabel>
@@ -34,7 +34,6 @@ void register_ap_screen::send_clicked()
     std::cout << "Calling function register_ap_interface()" << std::endl;
     int ret = register_ap_interface(id, ck);
     result_screen::show_result_screen(ret);
-
     hide();
 
 }

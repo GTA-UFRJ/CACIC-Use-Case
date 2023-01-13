@@ -1,7 +1,7 @@
 #include "register_ue_screen.h"
 #include "ui_register_ue_screen.h"
 #include "result_screen.h"
-#include "client_generic_interface_dumb.h"
+#include "client_generic_interface.h"
 #include "config_macros.h"
 
 #include <iostream>
@@ -34,7 +34,6 @@ void register_ue_screen::send_clicked()
     std::cout << "Calling function register_interface()" << std::endl;
     int ret = register_interface(id, ck);
     result_screen::show_result_screen(ret);
-
     hide();
     //parent->show();
 }

@@ -387,3 +387,20 @@ clean:
 	server/server_app/server_enclave_u.* \
 	server/server_enclave/server_enclave_t.* \
 	core
+
+clean_server:
+	@rm -f .config_* \
+	$(Server_Name) \
+	$(Enclave_Name) \
+	$(Signed_Enclave_Name) \
+	$(Server_Cpp_Objects) \
+	$(Enclave_Cpp_Objects) \
+	server/server_app/server_enclave_u.* \
+	server/server_enclave/server_enclave_t.* \
+	core
+
+clean_client:
+	@rm -f .config_* \
+	$(Client_Name) \
+	$(Client_Cpp_Objects) \
+	core

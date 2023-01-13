@@ -46,8 +46,8 @@ set(PROJECT_SOURCES
         queried_table_screen.ui
         ../utils/errors.h
         ../utils/errors.cpp
-        ../client/client_generic_interface_dumb.h
-        ../client/client_generic_interface_dumb.cpp
+        ../client/client_generic_interface.h
+        ../client/client_generic_interface.cpp
         ../config_macros.h
         Resources.qrc
 )
