@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+build-graphical-client-Desktop_Qt_6_4_1_GCC_64bit-Debug/
+graphical-client/CMakeLists.txt.user
+
+.vscode/*
+.vscode
+.vscode/settings.json

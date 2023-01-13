@@ -1,9 +1,9 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(TACIoT_UI VERSION 0.1 LANGUAGES CXX)
-include_directories(../TACIoT/client)
-include_directories(../TACIoT/utils)
-include_directories(../TACIoT/)
+include_directories(../client/)
+include_directories(../utils/)
+include_directories(../)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)

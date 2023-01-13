@@ -87,6 +87,6 @@ void query_screen::query_clicked()
     }
 
     queried_table_screen::show_queried_table_screen(queried_datas);
-    hide();
+    //hide();
 }
 

@@ -21,6 +21,8 @@ private slots:
 
 private:
     Ui::ue_perms_screen *ui;
+
+    enum perms_column_t {TYPE, ID};
 };
 
 #endif // UE_PERMS_SCREEN_H

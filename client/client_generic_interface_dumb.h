@@ -9,6 +9,7 @@
 
 #include "errors.h"
 #include <string>
+#include <stdint.h>
 
 // Overloaded alternatives
 int publish_interface(std::string, std::string, std::string, bool);

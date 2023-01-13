@@ -21,6 +21,8 @@ private slots:
 
 private:
     Ui::ap_perms_screen *ui;
+
+    enum perms_column_t {TYPE, ID};
 };
 
 #endif // AP_PERMS_SCREEN_H

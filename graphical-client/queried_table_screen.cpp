@@ -1,4 +1,5 @@
 #include "queried_table_screen.h"
+#include "query_screen.h"
 #include "ui_queried_table_screen.h"
 #include <string>
 #include <vector>
@@ -110,6 +111,5 @@ void queried_table_screen::config_queried_screen(std::vector<std::string> datas)
 
 void queried_table_screen::return_clicked()
 {
-
+    hide();
 }
-
