@@ -33,6 +33,7 @@ void MainWindow::register_ue_clicked()
 {
     // Model based approach
     std::cout << "Register UE clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     register_ue_screen register_ue_screen_object;
     register_ue_screen_object.setModal(true);
     register_ue_screen_object.exec();
@@ -47,6 +48,7 @@ void MainWindow::register_ue_clicked()
 void MainWindow::register_ap_clicked()
 {
     std::cout << "Register AP clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     register_ap_screen register_ap_screen_object;
     register_ap_screen_object.setModal(true);
     register_ap_screen_object.exec();
@@ -57,6 +59,7 @@ void MainWindow::register_ap_clicked()
 void MainWindow::ue_perms_clicked()
 {
     std::cout << "UE Perms clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     ue_perms_screen ue_perms_screen_object;
     ue_perms_screen_object.setModal(true);
     ue_perms_screen_object.exec();
@@ -67,6 +70,7 @@ void MainWindow::ue_perms_clicked()
 void MainWindow::ap_perms_clicked()
 {
     std::cout << "AP Perms clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     ap_perms_screen ap_perms_screen_object;
     ap_perms_screen_object.setModal(true);
     ap_perms_screen_object.exec();
@@ -75,6 +79,7 @@ void MainWindow::ap_perms_clicked()
 void MainWindow::publish_clicked()
 {
     std::cout << "Publish clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     publish_screen publish_screen_object;
     publish_screen_object.setModal(true);
     publish_screen_object.exec();
@@ -84,6 +89,7 @@ void MainWindow::publish_clicked()
 void MainWindow::query_clicked()
 {
     std::cout << "Query clicked" << std::endl;
+    std::cout << "---------------------" << std::endl;
     query_screen query_screen_object;
     query_screen_object.setModal(true);
     query_screen_object.exec();

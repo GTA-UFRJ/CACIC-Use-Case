@@ -269,9 +269,9 @@ int register_interface(int argc, char** argv)
         id.comunication_key[index] = (uint8_t)strtoul(byte_auxiliar, &invalid_char, 16);
 
         if(byte_auxiliar != 0 && *invalid_char != 0) 
-            return (int)print_error_message(INVALID_ENCRYPTED_FIELD_ERROR);
+            return (int)print_error_message(KEY_REGISTRATION_ERROR);
     }
-    //debug_print_encrypted(16, (uint8_t*)(id.comunication_key));
+    debug_print_encrypted(16, (uint8_t*)(id.comunication_key));
 
     //return configure_device(id);
     // Write identity into a file
@@ -303,7 +303,7 @@ int register_ap_interface(int argc, char** argv)
         id.comunication_key[index] = (uint8_t)strtoul(byte_auxiliar, &invalid_char, 16);
 
         if(byte_auxiliar != 0 && *invalid_char != 0) 
-            return (int)print_error_message(INVALID_ENCRYPTED_FIELD_ERROR);
+            return (int)print_error_message(KEY_REGISTRATION_ERROR);
     }
 
     return send_register_ap_message(id);
@@ -367,15 +367,18 @@ int publish_interface(std::string type, std::string sql_statement, std::string p
 {
     // argc does not determines argv size (it is only used to pass the argument to publish_interface)
     int argc = 5;
-    char argv[MAX_NUM_ARGS][MAX_ARG_SIZE];
+    char** argv = (char**)malloc(MAX_NUM_ARGS*sizeof(char*));
+    argv[2] = (char*)malloc(7);
+    argv[3] = (char*)malloc(MAX_DB_COMMAND_SIZE);
 
     // Copy type and data (SQL statetment) to argv array
-    strncpy(argv[2], type.c_str(), type.length());
-    strncpy(argv[3], sql_statement.c_str(), sql_statement.length());
+    strncpy(argv[2], type.c_str(), 7);
+    strncpy(argv[3], sql_statement.c_str(), MAX_DB_COMMAND_SIZE);
 
-    if(default_perms)
+    if(default_perms) {
+        argv[4] = (char*)malloc(8);
         strncpy(argv[4], "default", 8);
-
+    }
     else {
 
         // Split perms string using space as delimiter
@@ -384,14 +387,16 @@ int publish_interface(std::string type, std::string sql_statement, std::string p
         std::string token;
         while ((pos = perms.find(delimiter)) != std::string::npos) {
             token = perms.substr(0, pos);
-            strncpy(argv[argc-1], perms.c_str(), 8);
+            argv[argc-1] = (char*)malloc(9);
+            strncpy(argv[argc-1], perms.c_str(), 9);
             argc++;
             perms.erase(0, pos + delimiter.length());
         }
+        argv[argc-1] = (char*)malloc(9);
         strncpy(argv[argc-1], perms.c_str(), 8);
     }
 
-    return publish_interface(argc, (char**)argv);
+    return publish_interface(argc, argv);
 }
 
 int query_interface(uint32_t index, std::string sql_statement, std::string* returned_query)
@@ -444,10 +449,11 @@ int read_perm_interface(std::string type, std::string* returned_ids)
 int write_perm_interface(std::string type, std::string perms) 
 {
     int argc = 4;
-    char argv[MAX_NUM_ARGS][MAX_ARG_SIZE];
+    char** argv = (char**)malloc(MAX_NUM_ARGS*sizeof(char*));
+    argv[2] = (char*)malloc(7);
 
     // Copy type to argv array
-    strncpy(argv[2], type.c_str(), type.length());
+    strncpy(argv[2], type.c_str(), 7);
 
     // Split perms string using space as delimiter
     std::string delimiter = " ";
@@ -455,37 +461,43 @@ int write_perm_interface(std::string type, std::string perms)
     std::string token;
     while ((pos = perms.find(delimiter)) != std::string::npos) {
         token = perms.substr(0, pos);
-        strncpy(argv[argc-1], perms.c_str(), 8);
+        argv[argc-1] = (char*)malloc(9);
+        strncpy(argv[argc-1], perms.c_str(), 9);
         argc++;
         perms.erase(0, pos + delimiter.length());
     }
-    strncpy(argv[argc-1], perms.c_str(), 8);
+    argv[argc-1] = (char*)malloc(9);
+    strncpy(argv[argc-1], perms.c_str(), 9);
 
-    return write_perm_interface(argc, (char**)argv);
+    return write_perm_interface(argc, argv);
 }
 
 int register_interface(std::string id, std::string ck)
 {
     int argc = 4;
-    char argv[4][33];
+    char** argv = (char**)malloc(4*sizeof(char*));
+    argv[2] = (char*)malloc(9);
+    argv[3] = (char*)malloc(33);
 
     // Copy id and pk to argv array
-    strncpy(argv[2], id.c_str(), id.length());
-    strncpy(argv[3], ck.c_str(), ck.length());
+    strncpy(argv[2], id.c_str(), 9);
+    strncpy(argv[3], ck.c_str(), 33);
 
-    return register_interface(argc, (char**)argv);
+    return register_interface(argc, argv);
 }
 
 int register_ap_interface(std::string id, std::string ck)
 {
     int argc = 4;
-    char argv[4][33];
+    char** argv = (char**)malloc(4*sizeof(char*));
+    argv[2] = (char*)malloc(9);
+    argv[3] = (char*)malloc(33);
 
     // Copy id and pk to argv array
-    strncpy(argv[2], id.c_str(), id.length());
-    strncpy(argv[3], ck.c_str(), ck.length());
+    strncpy(argv[2], id.c_str(), 9);
+    strncpy(argv[3], ck.c_str(), 33);
 
-    return register_ap_interface(argc, (char**)argv);
+    return register_ap_interface(argc, argv);
 }
 
 int read_ap_perm_interface(std::string type, std::string* perms)
@@ -502,10 +514,11 @@ int read_ap_perm_interface(std::string type, std::string* perms)
 int write_ap_perm_interface(std::string type, std::string perms)  
 {
     int argc = 4;
-    char argv[MAX_NUM_ARGS][MAX_ARG_SIZE];
+    char** argv = (char**)malloc(MAX_NUM_ARGS*sizeof(char*));
+    argv[2] = (char*)malloc(7);
 
     // Copy type to argv array
-    strncpy(argv[2], type.c_str(), type.length());
+    strncpy(argv[2], type.c_str(), 7);
 
     // Split perms string using space as delimiter
     std::string delimiter = " ";
@@ -513,11 +526,13 @@ int write_ap_perm_interface(std::string type, std::string perms)
     std::string token;
     while ((pos = perms.find(delimiter)) != std::string::npos) {
         token = perms.substr(0, pos);
-        strncpy(argv[argc-1], perms.c_str(), 8);
+        argv[argc-1] = (char*)malloc(9);
+        strncpy(argv[argc-1], perms.c_str(), 9);
         argc++;
         perms.erase(0, pos + delimiter.length());
     }
-    strncpy(argv[argc-1], perms.c_str(), 8);
+    argv[argc-1] = (char*)malloc(9);
+    strncpy(argv[argc-1], perms.c_str(), 9);
 
     return write_ap_perm_interface(argc, (char**)argv);
 }

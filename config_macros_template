@@ -9,7 +9,7 @@
 #endif
 
 #ifndef TOKENS_PATH
-#define TOKENS_PATH "/home/guiaraujo/TACIoT/server/tokens"
+#define TOKENS_PATH "(ROOT)/server/tokens"
 #endif
 
 #ifndef PATH_MAX_SIZE 
@@ -29,19 +29,19 @@
 #endif
 
 #ifndef SERVER_URL
-#define SERVER_URL "0.0.0.0"
+#define SERVER_URL "(SERVERURL)"
 #endif
 
 #ifndef SERVER_PORT
-#define SERVER_PORT 5555
+#define SERVER_PORT (SERVERPORT)
 #endif
 
 #ifndef HTTPLIB_PATH
-#define HTTPLIB_PATH "/home/guiaraujo/cpp-httplib/httplib.h"
+#define HTTPLIB_PATH "(HTTPLIB)/httplib.h"
 #endif
 
 #ifndef SEALS_PATH
-#define SEALS_PATH "/home/guiaraujo/TACIoT/server/seals"
+#define SEALS_PATH "(ROOT)/server/seals"
 #endif
 
 #ifndef LATENCY_MS
@@ -89,7 +89,7 @@
 #endif
 
 #ifndef DB_PATH
-#define DB_PATH "/home/guiaraujo/TACIoT/database/sample"
+#define DB_PATH "(ROOT)/database/sample"
 #endif
 
 #ifndef DB_PATH_SIZE
@@ -145,7 +145,7 @@
 #endif
 
 #ifndef DATABASE_PATH
-#define DATABASE_PATH "/home/guiaraujo/TACIoT/database/taciot.db"
+#define DATABASE_PATH "(ROOT)/database/taciot.db"
 #endif
 
 #ifndef MAX_PAYLOAD_SIZE
@@ -153,7 +153,7 @@
 #endif
 
 #ifndef DEFAULT_PERMS_DB_PATH
-#define DEFAULT_PERMS_DB_PATH "/home/guiaraujo/TACIoT/database/default_permissions.db"
+#define DEFAULT_PERMS_DB_PATH "(ROOT)/database/default_permissions.db"
 #endif
 
 #ifndef MAX_NUM_PERMISSIONS
@@ -161,15 +161,15 @@
 #endif
 
 #ifndef CLIENT_KEY_FILENAME
-#define CLIENT_KEY_FILENAME "/home/guiaraujo/TACIoT/database/identity"
+#define CLIENT_KEY_FILENAME "(ROOT)/database/identity"
 #endif
 
 #ifndef AP_URL
-#define AP_URL "localhost"
+#define AP_URL "(APURL)"
 #endif
 
 #ifndef AP_PORT
-#define AP_PORT 8080
+#define AP_PORT (APPORT)
 #endif
 
 #ifndef MAX_ARG_SIZE

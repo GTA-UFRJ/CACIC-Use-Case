@@ -34,7 +34,7 @@ std::string get_error_message(server_error_t error) {
         break;
 
         case INVALID_ENCRYPTED_FIELD_ERROR:
-        return std::string("Invalid encrypted publication message format");
+        return std::string("Invalid encrypted message format");
         break;
 
         case OPEN_DATABASE_ERROR:

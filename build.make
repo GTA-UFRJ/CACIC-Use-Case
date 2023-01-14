@@ -43,7 +43,7 @@ SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
 LATENCY ?= 0
 
-HTTPLIB_DIR ?= /home/guiaraujo/cpp-httplib/
+HTTPLIB_DIR ?= ~/cpp-httplib/
 export LD_LIBRARY_PATH
 
 ifeq ($(shell getconf LONG_BIT), 32)
