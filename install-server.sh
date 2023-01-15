@@ -4,6 +4,10 @@ CPP_HTTPLIB_PATH=$2
 SERVER_URL=$3
 SERVER_PORT=$4
 
+g++ -c server/server_app/server_database_config.cpp -o server/server_app/server_database_config.o
+g++ server/server_app/server_database_config.o -l sqlite3 -o server/server_app/server_database_config
+./server/server_app/server_database_config taciot.db
+
 source $SGX_PATH
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/sample_libcrypto/
 

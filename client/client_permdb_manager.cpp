@@ -44,7 +44,7 @@ static int callback_perms(void* received_from_exec, int , char** columns_values,
     // Fill array with access permissions
     for(uint32_t index=0; index<number_access_permissions; index++) {
         (received_from_exec_tranformed->datas)[index] = (char*)malloc(9);
-        strncpy((received_from_exec_tranformed->datas)[index], columns_values[1], 8);
+        strncpy((received_from_exec_tranformed->datas)[index], columns_values[1]+9*index, 8);
         (received_from_exec_tranformed->datas)[index][8] = '\0';
     }
 

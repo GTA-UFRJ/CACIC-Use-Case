@@ -334,6 +334,7 @@ server_error_t get_response(stored_data_t stored,
     {
         i++;
         token = strtok_r(NULL, "|", &auxiliar_text);
+        printf("%s\n", token);
  
         if (i == 7+2*permission_count) {
             if(!memcmp(token, rcv_msg.pk, 8))

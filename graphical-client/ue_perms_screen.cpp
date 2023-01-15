@@ -38,15 +38,19 @@ void ue_perms_screen::fill_table()
     column_names << "Type" << "Permitted IDs";
     ui->table->setHorizontalHeaderLabels(column_names);
 
-    int row = ui->table->rowCount();
-    ui->table->insertRow(row);
-    ui->table->setItem(row, TYPE, new QTableWidgetItem(QString("Smart Meter")));
-    ui->table->setItem(row, ID, new QTableWidgetItem(QString(consumption_ids.c_str())));
-
-    row = ui->table->rowCount();
-    ui->table->insertRow(row);
-    ui->table->setItem(row, TYPE, new QTableWidgetItem(QString("Aggregated")));
-    ui->table->setItem(row, ID, new QTableWidgetItem(QString(aggregated_ids.c_str())));
+    int row = 0;
+    if(consumption_ids.size()) {
+        row = ui->table->rowCount();
+        ui->table->insertRow(row);
+        ui->table->setItem(row, TYPE, new QTableWidgetItem(QString("Smart Meter")));
+        ui->table->setItem(row, ID, new QTableWidgetItem(QString(consumption_ids.c_str())));
+    }
+    if(aggregated_ids.size()) {
+        row = ui->table->rowCount();
+        ui->table->insertRow(row);
+        ui->table->setItem(row, TYPE, new QTableWidgetItem(QString("Aggregated")));
+        ui->table->setItem(row, ID, new QTableWidgetItem(QString(aggregated_ids.c_str())));
+    }
 }
 
 void ue_perms_screen::add_clicked()

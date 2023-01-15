@@ -130,6 +130,32 @@ sgx_status_t process_data(
         ret = (sgx_status_t)0x5001;
         return ret;
     }
+
+    // Verify if payload exists and is valid
+    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    char* text = (char*)malloc(1+dec_msg_len);
+    memcpy(text, decMessage, dec_msg_len);
+    text[dec_msg_len] = '\0';
+
+    int i = 0;
+    char* invalid_char;
+    char* auxiliar_text = text;
+    char* token = strtok_r(auxiliar_text, "|", &auxiliar_text);
+    while (token != NULL)
+    {
+        i++;
+        token = strtok_r(NULL, "|", &auxiliar_text);
+ 
+        if (i == 5) {
+            strtoul(token, &invalid_char, 10);
+            if(*invalid_char != 0) {
+                free(text);
+                ret = (sgx_status_t)0x5004;
+                return ret;
+            }
+        }
+    }
+    free(text);
     
     // Encrypt data using key
     *processed_result_size = 16 + 12 + dec_msg_len;

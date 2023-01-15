@@ -6,4 +6,4 @@ inline bool verify_if_file_exists (const std::string& );
 
 static int callbacallback_create_tableck(void*, int, char**, char **);
 
-int configure_database();
+int configure_database(char* );

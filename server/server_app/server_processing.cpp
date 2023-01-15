@@ -148,6 +148,33 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
         return print_error_message(AUTHENTICATION_ERROR);
     }
 
+    // Verify if payload exists and is valid
+    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    char* text = (char*)malloc(1+decrypted_data_size);
+    memcpy(text, decrypted_data, decrypted_data_size);
+    text[decrypted_data_size] = '\0';
+
+    int i = 0;
+    char* invalid_char;
+    char* auxiliar_text = text;
+    char* token = strtok_r(auxiliar_text, "|", &auxiliar_text);
+    while (token != NULL)
+    {
+        i++;
+        token = strtok_r(NULL, "|", &auxiliar_text);
+ 
+        if (i == 5) {
+            strtoul(token, &invalid_char, 10);
+            if(*invalid_char != 0) {
+                free(text);
+                free(storage_key);
+                free(decrypted_data);
+                return print_error_message(INVALID_PAYLOAD_ERROR);
+            }
+        }
+    }
+    free(text);
+
     // Encrypt plaintext publihser data with storage key
     if(DEBUG_PRINT) printf("\nEncrypting publisher data\n");
 

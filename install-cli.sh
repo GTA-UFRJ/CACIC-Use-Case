@@ -5,6 +5,10 @@ AP_PORT=$3
 SERVER_URL=$4
 SERVER_PORT=$5
 
+g++ -c client/client_permdb_config.cpp -o client/client_permdb_config.o
+g++ client/client_permdb_config.o -l sqlite3 -o client/client_permdb_config
+./client/client_permdb_config default_permissions.db
+
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$PWD/sample_libcrypto/
 
 cp config_macros_template config_macros.h

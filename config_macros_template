@@ -156,6 +156,14 @@
 #define DEFAULT_PERMS_DB_PATH "(ROOT)/database/default_permissions.db"
 #endif
 
+#ifndef DEFAULT_PERMS_CLI_DB_PATH
+#define DEFAULT_PERMS_CLI_DB_PATH "(ROOT)/database/default_permissions_cli.db"
+#endif
+
+#ifndef DEFAULT_PERMS_AP_DB_PATH
+#define DEFAULT_PERMS_AP_DB_PATH "(ROOT)/database/default_permissions_ap.db"
+#endif
+
 #ifndef MAX_NUM_PERMISSIONS
 #define MAX_NUM_PERMISSIONS 16
 #endif

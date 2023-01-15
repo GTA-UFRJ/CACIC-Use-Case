@@ -34,15 +34,18 @@ static int callback_create_table(void* received_from_exec, int num_columns, char
 }
 
 
-int configure_database(){
+int configure_database(char* name){
 
-    if(verify_if_file_exists("./taciot.db")) {
+    char path[256];
+    sprintf(path, "./database/%s", name);
+
+    if(verify_if_file_exists(path)) {
         printf("Database file alredy exists\n");
     }
 
     // Open connection to database (create if it is not yet)
     sqlite3 *db;
-    int ret = sqlite3_open("./database/taciot.db", &db);
+    int ret = sqlite3_open(path, &db);
    
     if(ret) {
        printf("Can't open database: %s\n", sqlite3_errmsg(db));
@@ -82,6 +85,6 @@ int configure_database(){
     return 0;
 }
 
-int main () {
-    return configure_database();
+int main (int agrc, char** argv) {
+    return configure_database(argv[1]);
 }
