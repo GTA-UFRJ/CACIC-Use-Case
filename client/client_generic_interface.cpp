@@ -344,6 +344,7 @@ int write_ap_perm_interface(int argc, char** argv)
     for(uint32_t index=0; index<perms.permissions_count; index++) {
         (perms.permissions_list)[index] = (char*)malloc(9);
         strcpy((perms.permissions_list)[index], argv[index+3]);
+        //printf("TEST 1 %s\n", (perms.permissions_list)[index]);
     }
 
     ret = send_write_ap_perms_message(perms);
@@ -387,13 +388,17 @@ int publish_interface(std::string type, std::string sql_statement, std::string p
         std::string token;
         while ((pos = perms.find(delimiter)) != std::string::npos) {
             token = perms.substr(0, pos);
+
             argv[argc-1] = (char*)malloc(9);
-            strncpy(argv[argc-1], perms.c_str(), 9);
+            strncpy(argv[argc-1], perms.c_str(), 8);
+            argv[argc-1][8] = '\0';
+
             argc++;
             perms.erase(0, pos + delimiter.length());
         }
         argv[argc-1] = (char*)malloc(9);
         strncpy(argv[argc-1], perms.c_str(), 8);
+        argv[argc-1][8] = '\0';
     }
 
     return publish_interface(argc, argv);
@@ -404,7 +409,6 @@ int query_interface(uint32_t index, std::string sql_statement, std::string* retu
     client_identity_t id;
     if(read_identity(&id))
         return -1;
-
 
     uint32_t queried_data_size = MAX_DATA_SIZE;
     uint8_t queried_data[queried_data_size];
@@ -461,13 +465,17 @@ int write_perm_interface(std::string type, std::string perms)
     std::string token;
     while ((pos = perms.find(delimiter)) != std::string::npos) {
         token = perms.substr(0, pos);
+
         argv[argc-1] = (char*)malloc(9);
-        strncpy(argv[argc-1], perms.c_str(), 9);
+        strncpy(argv[argc-1], perms.c_str(), 8);
+        argv[argc-1][8] = '\0';
+
         argc++;
         perms.erase(0, pos + delimiter.length());
     }
     argv[argc-1] = (char*)malloc(9);
-    strncpy(argv[argc-1], perms.c_str(), 9);
+    strncpy(argv[argc-1], perms.c_str(), 8);
+    argv[argc-1][8] = '\0';
 
     return write_perm_interface(argc, argv);
 }
@@ -526,13 +534,17 @@ int write_ap_perm_interface(std::string type, std::string perms)
     std::string token;
     while ((pos = perms.find(delimiter)) != std::string::npos) {
         token = perms.substr(0, pos);
+
         argv[argc-1] = (char*)malloc(9);
-        strncpy(argv[argc-1], perms.c_str(), 9);
+        strncpy(argv[argc-1], perms.c_str(), 8);
+        argv[argc-1][8] = '\0';
+
         argc++;
         perms.erase(0, pos + delimiter.length());
     }
     argv[argc-1] = (char*)malloc(9);
-    strncpy(argv[argc-1], perms.c_str(), 9);
+    strncpy(argv[argc-1], perms.c_str(), 8);
+    argv[argc-1][8] = '\0';
 
     return write_ap_perm_interface(argc, (char**)argv);
 }

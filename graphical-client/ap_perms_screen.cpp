@@ -26,7 +26,7 @@ void ap_perms_screen::fill_table()
 {
     std::string consumption_type("123456");
     std::string consumption_ids = "";
-    read_perm_interface(consumption_type, &consumption_ids);
+    read_ap_perm_interface(consumption_type, &consumption_ids);
 
     std::string aggregated_type("555555");
     std::string aggregated_ids = "";
@@ -55,6 +55,14 @@ void ap_perms_screen::add_clicked()
     std::cout << "type: " << type << std::endl;
     std::string perms = ui->perms_lineedit->text().toStdString();
     std::cout << "perms: " << perms << std::endl;
+
+    bool filled_box = false;
+    while(!filled_box) {
+        if(perms[0] == ' ')
+            perms.erase(perms.begin());
+        else
+            filled_box = true;
+    }
 
     std::cout << "Calling function write_ap_perm_interface()" << std::endl;
     int ret = write_ap_perm_interface(type, perms);

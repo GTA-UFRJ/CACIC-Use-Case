@@ -79,6 +79,7 @@ int parse_configure_perms_message(char* msg, default_perms_t* p_rcv_perms) {
             (p_rcv_perms->permissions_list)[permission_count] = (char*)malloc(9);
             memcpy((p_rcv_perms->permissions_list)[permission_count], token, 8);
             (p_rcv_perms->permissions_list)[permission_count][8]  = '\0';
+            if(DEBUG_PRINT) printf("permission%u: %s\n", permission_count, (p_rcv_perms->permissions_list)[permission_count]);
             permission_count++;
         }
     }

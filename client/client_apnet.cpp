@@ -169,9 +169,11 @@ int initialize_ap_server ()
 
             sprintf(return_message, "%02d", (int)OPEN_DATABASE_ERROR);
             res.set_content(return_message, "text/plain");
-
+            
+            free_permissions_array(rcv_perms.permissions_list, rcv_perms.permissions_count);
             return (int)print_error_message(OPEN_DATABASE_ERROR);
         } 
+
 
         // Write access permissions for type in database
         ret = write_default_perms(db, rcv_perms.type, rcv_perms.permissions_list, rcv_perms.permissions_count);
@@ -240,6 +242,7 @@ int initialize_ap_server ()
         }
 
         char* response = (char*)malloc(permissions_count*9);
+        memset(response, 0, permissions_count*9);
         ret = make_perms_response(permissions, permissions_count, response);
         free_permissions_array(permissions, permissions_count);
         if(ret) {
@@ -250,6 +253,7 @@ int initialize_ap_server ()
         }
 
         // Send response
+        printf("Sending: %s\n", response);
         res.set_content(response, "text/plain");
         return 0;
     });

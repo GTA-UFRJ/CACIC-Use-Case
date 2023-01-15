@@ -12,6 +12,7 @@
 #include <chrono>
 #include <thread>
 #include "utils/encryption.h"
+#include "utils/utils.h"
 #include "errors.h"
 
 #include "timer.h"
@@ -85,6 +86,7 @@ int send_query_message(uint32_t data_index,
     // Build query message
     // http://localhost:7778/query/size=24/pk|72d41281|index|000000
     char* http_request = (char*)malloc(URL_MAX_SIZE);
+    memset(http_request, 0, URL_MAX_SIZE);
     uint32_t message_size = 53+(uint32_t)strlen(command)+(8+16+12)*3;
     sprintf(http_request, "/query/size=%u/pk|%s|index|%06u|size|%02x|command|%s|encrypted|", 
     message_size, id, data_index, command_size, command);
@@ -145,6 +147,7 @@ int client_query(uint8_t* key, uint8_t* data, uint32_t data_index, char* command
     // Encrypt pk
     uint32_t enc_pk_size = 8+12+16;
     uint8_t* enc_pk = (uint8_t*)malloc(enc_pk_size);
+    memset(enc_pk,0,enc_pk_size);
     sample_status_t ret = encrypt_data(key, enc_pk, &enc_pk_size, (uint8_t*)id, 8);
     if(ret != SAMPLE_SUCCESS) {
         free(enc_pk);

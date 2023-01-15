@@ -111,6 +111,7 @@ int send_write_ap_perms_message(default_perms_t perms) {
     // type|123456|permission1|72d41281|...
     uint32_t formatted_data_size = 5+7+8+(13+8)*(perms.permissions_count); 
     char* formatted_data = (char*)malloc(formatted_data_size+1);
+    memset(formatted_data, 0, formatted_data_size);
     sprintf(formatted_data,"type|%s", perms.type);
 
     char* permission = (char*)malloc(22);

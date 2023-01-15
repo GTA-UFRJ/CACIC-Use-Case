@@ -36,10 +36,10 @@ std::string query_screen::build_sql_statement(std::string types, std::string ids
             filled_box = true;
     }
     if(!filled_box || ids == "")
-        return "SELECT_*_from_TACIOT where type='123456'";
+        return "SELECT_*_from_TACIOT where type='" + types + "'";
 
     char sql_statement[MAX_DB_COMMAND_SIZE];
-    sprintf(sql_statement, "SELECT_*_from_TACIOT where type='123456' and (");
+    sprintf(sql_statement, "SELECT * from TACIOT where type='%s' and (", types.c_str());
 
     std::string delimiter = " ";
 
