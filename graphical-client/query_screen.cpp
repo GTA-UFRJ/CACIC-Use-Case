@@ -80,8 +80,7 @@ void query_screen::query_clicked()
 
         if(ret && ret != OUT_OF_BOUND_INDEX) {
             std::cout << "Error in query_interface()" << std::endl;
-            result_screen::show_result_screen(ret);
-            return;
+            //result_screen::show_result_screen(ret);
         }
         index++;
     }

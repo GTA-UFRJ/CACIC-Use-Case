@@ -83,6 +83,7 @@ void publish_screen::send_clicked()
     int ret = publish_interface(std::string(type), sql_statement, perms, checked);
     result_screen::show_result_screen(ret);
 
-    hide();
+    if(!ret)
+        hide();
 }
 

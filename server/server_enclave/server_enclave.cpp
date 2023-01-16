@@ -427,6 +427,7 @@ sgx_status_t sum_encrypted_data_s(
     unsigned long total = 0;
     memset(client_data,0,max_data_size);
     char payload[128];
+    bool errogenous_data = false;
     for (uint32_t index = 0; index < data_count; index++) {
 
         // Separate parameters of stored data
@@ -468,58 +469,58 @@ sgx_status_t sum_encrypted_data_s(
                                         (const sgx_aes_gcm_128bit_tag_t*)
                                         (encrypted_data));
         if(ret != SGX_SUCCESS) {
-            free(client_data);
-            return ret;
+            errogenous_data = true;
         }
+        
+        unsigned long numeric_payload = 0;
+        bool accepted = false;
+        if(!errogenous_data) {
 
-        // Verify if publisher can access this data
-        // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
-       char* p_auxiliar_client_data = (char*)malloc(1+encrypted_size-16-12);
-       memcpy(p_auxiliar_client_data, client_data, encrypted_size-16-12);
-       p_auxiliar_client_data[encrypted_size-16-12] = 0;
-
-       unsigned long numeric_payload = 0;
-
-       int permission_count = 0;
-       bool accepted = false;
-        i = 0;
-       token = strtok_r(p_auxiliar_client_data, "|", &p_auxiliar_client_data);
-
-       while (token != NULL && accepted == false)
-        {
-            i++;
-            token = strtok_r(NULL, "|", &p_auxiliar_client_data);
-            if (i == 7+2*permission_count) {
-                if(!memcmp(token, publisher_pk, 8))
-                    accepted = true;
-                permission_count++;
-            }
-
-            // Save payload in memory
-            if (i == 5) {
-                unsigned j=0;
-                while(token[j] != '|' && j<128) { 
-                    payload[j] = token[j];
-                    j++;
+            // Verify if publisher can access this data
+            // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+            char* p_auxiliar_client_data = (char*)malloc(1+encrypted_size-16-12);
+            memcpy(p_auxiliar_client_data, client_data, encrypted_size-16-12);
+            p_auxiliar_client_data[encrypted_size-16-12] = 0;
+        
+        
+            int permission_count = 0;
+            i = 0;
+            token = strtok_r(p_auxiliar_client_data, "|", &p_auxiliar_client_data);
+        
+            while (token != NULL && accepted == false && errogenous_data == false)
+            {
+                i++;
+                token = strtok_r(NULL, "|", &p_auxiliar_client_data);
+                if (i == 7+2*permission_count) {
+                    if(!memcmp(token, publisher_pk, 8))
+                        accepted = true;
+                    permission_count++;
                 }
-                payload[j] = 0;
-
-                char* invalid_char;
-                numeric_payload = strtoul(payload, &invalid_char, 10);
-                
-                if(payload != 0 && *invalid_char != 0) {
-                    ret = (sgx_status_t)0x5003;
-                    free(client_data);
-                    free(p_auxiliar_client_data);
-                    return ret;
+    
+                // Save payload in memory
+                if (i == 5) {
+                    unsigned j=0;
+                    while(token[j] != '|' && j<128) { 
+                        payload[j] = token[j];
+                        j++;
+                    }
+                    payload[j] = 0;
+    
+                    char* invalid_char;
+                    numeric_payload = strtoul(payload, &invalid_char, 10);
+                    
+                    if(payload != 0 && *invalid_char != 0) {
+                        ret = (sgx_status_t)0x5003;
+                        errogenous_data = true;
+                    }
                 }
             }
+            free(p_auxiliar_client_data);
+            // client_data = pk|72d41281|type|123456|payload|250|permission1|72d41281
         }
-        free(p_auxiliar_client_data);
-        // client_data = pk|72d41281|type|123456|payload|250|permission1|72d41281
 
         // Update total
-        if(accepted)
+        if(accepted && !errogenous_data)
             total += numeric_payload;
 
         memset(client_data,0,max_data_size);

@@ -29,6 +29,7 @@ int send_revoke_message(uint32_t data_index, char* command, uint32_t command_siz
     // Build revoke message
     // http://localhost:7778/revoke/size=24/pk|72d41281|index|000000
     char http_request[URL_MAX_SIZE];
+    memset(http_request, 0, URL_MAX_SIZE);
     char http_response[URL_MAX_SIZE];
     uint32_t message_size = 53+(uint32_t)strlen(command)+(8+16+12)*3;
     sprintf(http_request, "/revoke/size=%u/pk|%s|index|%06u|size|%02x|command|%s|encrypted|", 

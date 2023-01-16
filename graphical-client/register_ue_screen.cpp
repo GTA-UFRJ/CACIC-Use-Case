@@ -34,7 +34,9 @@ void register_ue_screen::send_clicked()
     std::cout << "Calling function register_interface()" << std::endl;
     int ret = register_interface(id, ck);
     result_screen::show_result_screen(ret);
-    hide();
+
+    if(!ret)
+        hide();
     //parent->show();
 }
 

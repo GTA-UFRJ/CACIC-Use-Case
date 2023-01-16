@@ -78,6 +78,7 @@ int client_register(client_identity_t rcv_id) {
     // pk|72d41281|ck|00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00- (16 bytes of zeros, for example) 
     uint32_t formatted_msg_size = 62;
     char* formatted_msg = (char*)malloc(formatted_msg_size+1);
+    memset(formatted_msg, 0, formatted_msg_size+1);
     sprintf(formatted_msg,"pk|%s|ck|", rcv_id.pk);
 
     for(uint32_t index=0; index<16; index++) 

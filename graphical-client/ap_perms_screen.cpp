@@ -26,11 +26,16 @@ void ap_perms_screen::fill_table()
 {
     std::string consumption_type("123456");
     std::string consumption_ids = "";
-    read_ap_perm_interface(consumption_type, &consumption_ids);
+    int ret1 = read_ap_perm_interface(consumption_type, &consumption_ids);
 
     std::string aggregated_type("555555");
     std::string aggregated_ids = "";
-    read_ap_perm_interface(aggregated_type, &aggregated_ids);
+    int ret2 = read_ap_perm_interface(aggregated_type, &aggregated_ids);
+
+    if(ret1 | ret2) {
+        result_screen::show_result_screen(43);
+        hide();
+    }
 
     // edit table
     ui->table->setColumnCount(2);
@@ -53,6 +58,22 @@ void ap_perms_screen::fill_table()
     }
 }
 
+void ap_perms_screen::update_table()
+{
+    std::string consumption_type("123456");
+    std::string consumption_ids = "";
+    read_perm_interface(consumption_type, &consumption_ids);
+
+    std::string aggregated_type("555555");
+    std::string aggregated_ids = "";
+    read_perm_interface(aggregated_type, &aggregated_ids);
+
+    ui->table->setItem(0, TYPE, new QTableWidgetItem(QString("Smart Meter")));
+    ui->table->setItem(0, ID, new QTableWidgetItem(QString(consumption_ids.c_str())));
+    ui->table->setItem(1, TYPE, new QTableWidgetItem(QString("Aggregated")));
+    ui->table->setItem(1, ID, new QTableWidgetItem(QString(aggregated_ids.c_str())));
+}
+
 void ap_perms_screen::add_clicked()
 {
     std::string type = ui->type_lineedit->text().toStdString();
@@ -71,6 +92,8 @@ void ap_perms_screen::add_clicked()
     std::cout << "Calling function write_ap_perm_interface()" << std::endl;
     int ret = write_ap_perm_interface(type, perms);
     result_screen::show_result_screen(ret);
+
+    update_table();
 
     //hide();
 }

@@ -64,6 +64,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
     if(DEBUG_PRINT) printf("\nDecrypting collected datas\n");
 
     unsigned long total = 0;
+    bool errogenous_data = false;
     for (uint32_t index = 0; index < data_count; index++) {
 
         // Separate parameters of stored data
@@ -77,64 +78,59 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                            client_data,
                            &client_data_size);
         if(encryption_ret != SAMPLE_SUCCESS) {
-            free(client_data);
-            free(access_permissions);
-            return print_error_message(DATA_DECRYPTION_ERROR);
+            errogenous_data = true;
+            print_error_message(DATA_DECRYPTION_ERROR);
         }
 
-        /*
-        char* client_data_clone = (char*)malloc(MAX_DATA_SIZE*sizeof(char));
-        memcpy(client_data_clone,client_data,MAX_DATA_SIZE*sizeof(char));
-        printf("%s\n", client_data_clone);
-        */
+        unsigned long numeric_payload = 0;
+        bool accepted = false;
+        if(!errogenous_data) {
 
-       // Verify if publisher can access this data
-        // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
-       char auxiliar_client_data [1 + stored_data.encrypted_size * sizeof(char)];
-       memcpy(auxiliar_client_data, client_data, client_data_size);
-       auxiliar_client_data[client_data_size] = '\0';
+            // Verify if publisher can access this data
+            // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+            char auxiliar_client_data [1 + stored_data.encrypted_size * sizeof(char)];
+            memcpy(auxiliar_client_data, client_data, client_data_size);
+            auxiliar_client_data[client_data_size] = '\0';
 
-       char payload[MAX_PAYLOAD_SIZE+1];
-       unsigned long numeric_payload = 0;
+            char payload[MAX_PAYLOAD_SIZE+1];
 
-       int permission_count = 0;
-       bool accepted = false;
-       i = 0;
-       char* p_auxiliar_client_data = &auxiliar_client_data[0];
-       token = strtok_r(p_auxiliar_client_data, "|", &p_auxiliar_client_data);
-       while (token != NULL && accepted == false)
-        {
-            i++;
-            token = strtok_r(NULL, "|", &p_auxiliar_client_data);
-            if (i == 7+2*permission_count) {
-                if(!memcmp(token, pk, 8))
-                    accepted = true;
-                permission_count++;
-            }
-
-            // Save payload in memory
-            if (i == 5) { 
-
-                unsigned j=0;
-                while(token[j] != '|' && j<MAX_PAYLOAD_SIZE) { 
-                    payload[j] = token[j];
-                    j++;
+            int permission_count = 0;
+            i = 0;
+            char* p_auxiliar_client_data = &auxiliar_client_data[0];
+            token = strtok_r(p_auxiliar_client_data, "|", &p_auxiliar_client_data);
+            while (token != NULL && accepted == false && errogenous_data == false)
+            {
+                i++;
+                token = strtok_r(NULL, "|", &p_auxiliar_client_data);
+                if (i == 7+2*permission_count) {
+                    if(!memcmp(token, pk, 8))
+                        accepted = true;
+                    permission_count++;
                 }
-                payload[j] = 0; 
 
-                char* invalid_char;
-                numeric_payload = strtoul(payload, &invalid_char, 10);
+                // Save payload in memory
+                if (i == 5) { 
 
-                if(payload != 0 && *invalid_char != 0) {
-                    free(client_data);
-                    free(access_permissions);
-                    return print_error_message(INVALID_PAYLOAD_ERROR);
+                    unsigned j=0;
+                    while(token[j] != '|' && j<MAX_PAYLOAD_SIZE) { 
+                        payload[j] = token[j];
+                        j++;
+                    }
+                    payload[j] = 0; 
+
+                    char* invalid_char;
+                    numeric_payload = strtoul(payload, &invalid_char, 10);
+
+                    if(payload != 0 && *invalid_char != 0) {
+                        errogenous_data = true;
+                        print_error_message(INVALID_PAYLOAD_ERROR); 
+                    }
                 }
             }
         }
 
         // Update total
-        if(accepted)
+        if(accepted && !errogenous_data)
             total += numeric_payload;
 
         memset(client_data,0,MAX_DATA_SIZE*sizeof(uint8_t));

@@ -94,6 +94,7 @@ int client_publish(uint8_t* key, client_data_t data)
     // pk|72d41281|type|123456|payload|250|permission1|72d41281
     uint32_t formatted_data_size = 3+9+5+7+8+(uint32_t)strlen(data.payload)+(13+8)*(data.permissions_count); // 56
     char* formatted_data = (char*)malloc(sizeof(char) * (formatted_data_size+1));
+    memset(formatted_data, 0, formatted_data_size+1);
     sprintf(formatted_data,"pk|%s|type|%s|payload|%s", 
             data.pk, data.type, data.payload);
 

@@ -15,6 +15,7 @@ public:
     explicit ap_perms_screen(QWidget *parent = nullptr);
     ~ap_perms_screen();
     void fill_table();
+    void update_table();
 
 private slots:
     void add_clicked();

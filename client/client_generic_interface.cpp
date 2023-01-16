@@ -465,6 +465,7 @@ int write_perm_interface(std::string type, std::string perms)
     std::string token;
     while ((pos = perms.find(delimiter)) != std::string::npos) {
         token = perms.substr(0, pos);
+        std::cout << perms << std::endl;
 
         argv[argc-1] = (char*)malloc(9);
         strncpy(argv[argc-1], perms.c_str(), 8);

@@ -159,7 +159,7 @@ server_error_t database_delete(sqlite3* db, stored_data_t stored_message)
 
 server_error_t database_read(sqlite3* db, char* command, char** datas, uint32_t* datas_sizes, uint32_t* data_count) 
 {
-    Timer t("database_read");
+    Timer t("database_read"); 
    
     if(DEBUG_PRINT) printf("\nReading from database\n");
 

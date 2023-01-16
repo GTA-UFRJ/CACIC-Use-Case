@@ -166,7 +166,7 @@ int make_perms_response(char** permissions, uint32_t permissions_count, char* re
     return 0;
 }
 
-int read_default_perms(sqlite3* db, char* type, char** permissions_list, uint32_t* permissions_count) {
+int read_default_perms(sqlite3* db, char* type, char** permissions_list, uint32_t* permissions_count) { 
 
     // Build SQL statement form quering data
     char* command = (char*)malloc(MAX_DB_COMMAND_SIZE);
@@ -175,6 +175,7 @@ int read_default_perms(sqlite3* db, char* type, char** permissions_list, uint32_
     // Allocate an array with 16 access permissions
     callback_arg_t passed_to_callback;
     passed_to_callback.datas = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
+    passed_to_callback.data_count = 0;
 
     // Execute SQL statement
     char *error_message = 0;
@@ -196,7 +197,8 @@ int read_default_perms(sqlite3* db, char* type, char** permissions_list, uint32_
     *permissions_count = passed_to_callback.data_count;
     for(unsigned i=0; i<passed_to_callback.data_count; i++) {
         permissions_list[i] = (char*)malloc(9);
-        memcpy(permissions_list[i], (passed_to_callback.datas)[i], 9);
+        strncpy(permissions_list[i], (passed_to_callback.datas)[i], 8);
+        permissions_list[i][8] = '\0';
     }
     free_callback_arg(passed_to_callback);
 

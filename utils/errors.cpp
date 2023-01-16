@@ -98,11 +98,11 @@ std::string get_error_message(server_error_t error) {
         break;
 
         case HTTP_SEND_ERROR:
-        return std::string("Error sending HTTP message to server");
+        return std::string("Error sending HTTP message");
         break;
 
         case HTTP_RESPONSE_ERROR:
-        return std::string("Server responded with an HTTP error");
+        return std::string("Responded with an HTTP error");
         break;
 
         case CLIENT_ENCRYPTION_ERROR:
@@ -138,7 +138,7 @@ std::string get_error_message(server_error_t error) {
         break;
 
         case INVALID_ERROR_CODE_FORMAT_ERROR:
-        return std::string("Invalid error code formatation received from server");
+        return std::string("Invalid error code formatation received");
         break;
 
         case ALREDY_REGISTERED_ERROR:
@@ -147,6 +147,10 @@ std::string get_error_message(server_error_t error) {
 
         case KEY_REGISTRATION_ERROR:
         return std::string("Could not save client key");
+        break;
+
+        case AP_READ_PERMS_ERROR:
+        return std::string("Could not synchronize with access point");
         break;
 
         default:

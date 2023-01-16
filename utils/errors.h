@@ -52,7 +52,8 @@ typedef enum {
     INVALID_HTTP_RESPONSE_SIZE_FIELD_ERROR, // 39
     HTTP_RESPONSE_SIZE_OVERFLOW_ERROR,      // 40
     INVALID_ENCRYPTED_RESPONSE_ERROR,       // 41
-    INVALID_ERROR_CODE_FORMAT_ERROR         // 42
+    INVALID_ERROR_CODE_FORMAT_ERROR,        // 42
+    AP_READ_PERMS_ERROR                     // 43
 } server_error_t;
 
 std::string get_error_message(server_error_t error);
