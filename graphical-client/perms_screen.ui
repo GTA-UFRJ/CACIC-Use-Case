@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ap_perms_screen</class>
- <widget class="QDialog" name="ap_perms_screen">
+ <class>perms_screen</class>
+ <widget class="QDialog" name="perms_screen">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>501</width>
-    <height>301</height>
+    <width>723</width>
+    <height>274</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QLabel" name="label_4">
        <property name="sizePolicy">
@@ -33,7 +33,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="table">
+      <widget class="QTableWidget" name="ap_table">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -58,6 +58,48 @@
    </item>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <item>
+      <widget class="QLabel" name="label_6">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Current default perm. in UE</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTableWidget" name="ue_table">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>215</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>215</width>
+         <height>16777215</height>
+        </size>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <spacer name="verticalSpacer">
        <property name="orientation">
@@ -85,7 +127,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="type_lineedit"/>
+      <widget class="QComboBox" name="types_box">
+       <item>
+        <property name="text">
+         <string>None</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Smart Meter</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Aggregated</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <widget class="QLabel" name="label_2">
@@ -109,6 +167,35 @@
      </item>
      <item>
       <widget class="QLineEdit" name="perms_lineedit"/>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>Save locations</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="location_box">
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>This device</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Access point</string>
+        </property>
+       </item>
+      </widget>
      </item>
      <item>
       <spacer name="verticalSpacer_2">

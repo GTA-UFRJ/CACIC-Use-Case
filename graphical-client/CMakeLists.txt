@@ -26,15 +26,9 @@ set(PROJECT_SOURCES
         register_ap_screen.h
         register_ap_screen.cpp
         register_ap_screen.ui
-        ue_perms_screen.h
-        ue_perms_screen.cpp
-        ue_perms_screen.ui
         publish_screen.h
         publish_screen.cpp
         publish_screen.ui
-        ap_perms_screen.h
-        ap_perms_screen.cpp
-        ap_perms_screen.ui
         query_screen.h
         query_screen.cpp
         query_screen.ui
@@ -44,6 +38,9 @@ set(PROJECT_SOURCES
         queried_table_screen.h
         queried_table_screen.cpp
         queried_table_screen.ui
+        perms_screen.h
+        perms_screen.cpp
+        perms_screen.ui
         ../utils/errors.h
         ../utils/errors.cpp
         ../client/client_generic_interface.h

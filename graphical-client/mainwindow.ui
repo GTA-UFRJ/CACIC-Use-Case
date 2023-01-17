@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>562</width>
-    <height>229</height>
+    <height>191</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -28,6 +28,19 @@
       </property>
      </widget>
     </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="publish_button">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Publish</string>
+      </property>
+     </widget>
+    </item>
     <item row="5" column="0">
      <widget class="QPushButton" name="register_ap_button">
       <property name="sizePolicy">
@@ -38,42 +51,6 @@
       </property>
       <property name="text">
        <string>Register my Access Point </string>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1">
-     <widget class="QLabel" name="label_2">
-      <property name="text">
-       <string>Actions</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="2" column="0">
-     <widget class="QPushButton" name="register_ue_button">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Register this Equipment</string>
-      </property>
-     </widget>
-    </item>
-    <item row="8" column="0">
-     <widget class="QPushButton" name="ap_perms_button">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
-      <property name="text">
-       <string>Configure Access Point Permissions</string>
       </property>
      </widget>
     </item>
@@ -93,8 +70,8 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
-     <widget class="QPushButton" name="ue_perms_button">
+    <item row="2" column="0">
+     <widget class="QPushButton" name="register_ue_button">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -102,12 +79,22 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Configure Local Permissions</string>
+       <string>Register this Equipment</string>
       </property>
      </widget>
     </item>
-    <item row="2" column="1">
-     <widget class="QPushButton" name="publish_button">
+    <item row="1" column="1">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>Actions</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="0">
+     <widget class="QPushButton" name="perms_button">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
         <horstretch>0</horstretch>
@@ -115,7 +102,7 @@
        </sizepolicy>
       </property>
       <property name="text">
-       <string>Publish</string>
+       <string>Configure Permissions</string>
       </property>
      </widget>
     </item>
@@ -134,7 +121,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionlogo">
    <property name="icon">
-    <iconset resource="Resources.qrc">
+    <iconset>
      <normaloff>:/imgs/254e266bf32e4e8fbfb9ad996f1307d7.png</normaloff>
      <normalon>:/imgs/254e266bf32e4e8fbfb9ad996f1307d7.png</normalon>:/imgs/254e266bf32e4e8fbfb9ad996f1307d7.png</iconset>
    </property>
@@ -144,7 +131,7 @@
   </action>
   <action name="actioncaciclogo">
    <property name="icon">
-    <iconset resource="Resources.qrc">
+    <iconset>
      <normaloff>:/imgs/logo_cacic.png</normaloff>:/imgs/logo_cacic.png</iconset>
    </property>
    <property name="text">
@@ -152,8 +139,6 @@
    </property>
   </action>
  </widget>
- <resources>
-  <include location="Resources.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

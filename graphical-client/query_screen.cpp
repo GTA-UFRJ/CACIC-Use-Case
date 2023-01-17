@@ -58,7 +58,8 @@ std::string query_screen::build_sql_statement(std::string types, std::string ids
 
 void query_screen::query_clicked()
 {
-    std::string types = ui->types_lineedit->text().toStdString();
+    const char* types_char = type_codes[ui->types_box->currentIndex()];
+    std::string types(types_char);
     std::cout << "types: " << types << std::endl;
     std::string ids = ui->ids_lineedit->text().toStdString();
     std::cout << "IDs: " << ids << std::endl;
@@ -78,9 +79,10 @@ void query_screen::query_clicked()
 
         if(!ret) queried_datas.push_back(returned_query);
 
-        if(ret && ret != OUT_OF_BOUND_INDEX) {
+        if(ret && ret != ACCESS_DENIED && ret != OUT_OF_BOUND_INDEX) {
             std::cout << "Error in query_interface()" << std::endl;
-            //result_screen::show_result_screen(ret);
+            result_screen::show_result_screen(ret);
+            return;
         }
         index++;
     }

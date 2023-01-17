@@ -1,4 +1,3 @@
-#!/bin/bash
 rm CACIC-GUI
 rm config_macros.h
 mv ./database/default_permissions.db "./backup/default_permissions-$(date '+%F-%H-%M-%S').db"

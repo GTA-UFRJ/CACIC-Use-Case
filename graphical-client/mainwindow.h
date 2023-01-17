@@ -22,11 +22,9 @@ private slots:
 
     void register_ap_clicked();
 
-    void ue_perms_clicked();
+    void perms_clicked();
 
     void publish_clicked();
-
-    void ap_perms_clicked();
 
     void query_clicked();
 

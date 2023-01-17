@@ -34,7 +34,9 @@ void register_ap_screen::send_clicked()
     std::cout << "Calling function register_ap_interface()" << std::endl;
     int ret = register_ap_interface(id, ck);
     result_screen::show_result_screen(ret);
-    hide();
+
+    if(!ret)
+        hide();
 
 }
 

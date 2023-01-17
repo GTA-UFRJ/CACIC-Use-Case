@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>402</width>
-    <height>207</height>
+    <width>398</width>
+    <height>206</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,18 +38,27 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Types 6-digit numeric code</string>
+        <string>Types</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QLineEdit" name="types_lineedit">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
+      <widget class="QComboBox" name="types_box">
+       <item>
+        <property name="text">
+         <string>All</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Smart Meters</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Aggregated</string>
+        </property>
+       </item>
       </widget>
      </item>
      <item row="1" column="0">
