@@ -25,15 +25,19 @@ public:
     explicit queried_table_screen(std::vector<std::string> datas, QWidget *parent = nullptr);
     ~queried_table_screen();
 
-    void config_queried_screen(std::vector<std::string> datas);
+    void config_queried_screen();
 
 private slots:
     void return_clicked();
+    void gencsv_clicked();
+
 
 private:
     Ui::queried_table_screen *ui;
 
     enum queried_table_column_t {TIME, TYPE, ID, PAYLOAD};
+    std::vector<std::string> datas;
+    std::vector<queried_data_t> structured_datas;
 };
 
 #endif // QUERIED_TABLE_SCREEN_H

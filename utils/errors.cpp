@@ -153,6 +153,10 @@ std::string get_error_message(server_error_t error) {
         return std::string("Could not synchronize with access point");
         break;
 
+        case OPEN_CSV_FILE_ERROR:
+        return std::string("Could not open CSV output file");
+        break;
+
         default:
         return std::string("Unknown error");
         break;

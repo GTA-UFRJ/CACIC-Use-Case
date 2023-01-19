@@ -1,9 +1,13 @@
 #include "queried_table_screen.h"
-#include "query_screen.h"
 #include "ui_queried_table_screen.h"
+#include "result_screen.h"
+#include "errors.h"
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include <QFile>
+#include <QTextStream>
 
 void queried_table_screen::show_queried_table_screen(std::vector<std::string> datas) {
     queried_table_screen queried_table_screen_object(datas);
@@ -13,13 +17,15 @@ void queried_table_screen::show_queried_table_screen(std::vector<std::string> da
 
 queried_table_screen::queried_table_screen(std::vector<std::string> datas, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::queried_table_screen)
+    ui(new Ui::queried_table_screen),
+    datas(datas)
 {
     ui->setupUi(this);
 
-    config_queried_screen(datas);
+    config_queried_screen();
 
     connect(ui->return_button, SIGNAL(pressed()), this, SLOT(return_clicked()));
+    connect(ui->gencsv_button, SIGNAL(pressed()), this, SLOT(gencsv_clicked()));
 }
 
 queried_table_screen::~queried_table_screen()
@@ -82,7 +88,7 @@ void queried_table_screen::parse_data_fields(std::string data, queried_data_t* p
 */
 }
 
-void queried_table_screen::config_queried_screen(std::vector<std::string> datas)
+void queried_table_screen::config_queried_screen()
 {
     setWindowTitle("CACIC - Result");
 
@@ -99,6 +105,7 @@ void queried_table_screen::config_queried_screen(std::vector<std::string> datas)
 
         queried_data_t data_fields;
         parse_data_fields(data, &data_fields);
+        structured_datas.push_back(data_fields);
 
         int row = ui->table->rowCount();
         ui->table->insertRow(row);
@@ -113,3 +120,26 @@ void queried_table_screen::return_clicked()
 {
     hide();
 }
+
+void queried_table_screen::gencsv_clicked()
+{
+    QFile file("./out.csv");
+    if(!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        std::cout << "Error opening CSV output file" << std::endl;
+        result_screen::show_result_screen(OPEN_CSV_FILE_ERROR);
+    }
+
+    QTextStream out (&file);
+
+    for(unsigned i=0; i<datas.size(); i++)
+        out << structured_datas[i].time     << ',' <<
+               structured_datas[i].type     << ',' <<
+               structured_datas[i].id       << ',' <<
+               structured_datas[i].payload  << '\n';
+
+    file.flush();
+    file.close();
+    std::cout << "Success generation out.csv" << std::endl;
+    result_screen::show_result_screen(OK);
+}
+
