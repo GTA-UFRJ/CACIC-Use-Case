@@ -18,16 +18,24 @@ server_error_t get_stored_parameters(char* msg, stored_data_t* p_stored)
 
     if(DEBUG_PRINT) printf("\nParsing stored data fields\n");
 
-    // type|123456|pk|72d41281|size|0x54|encrypted|0x62-
+    // time|2012-05-06.21:47:59|type|123456|pk|72d41281|size|0x54|encrypted|0x62-...
     char* token = strtok_r(msg, "|", &msg);
     int i = 0;
-    while (token != NULL && i<6)
+    while (token != NULL && i<8)
     {
         i++;
         token = strtok_r(NULL, "|", &msg);
 
-        // Get type     
+        // Get time     
         if (i == 1) {
+            memcpy(p_stored->time, token, 19);
+            p_stored->time[19] = '\0';
+
+            if(DEBUG_PRINT) printf("time: %s\n", p_stored->time);
+        }
+
+        // Get type     
+        if (i == 3) {
             memcpy(p_stored->type, token, 6);
             p_stored->type[6] = '\0';
 
@@ -35,7 +43,7 @@ server_error_t get_stored_parameters(char* msg, stored_data_t* p_stored)
         }
 
         // Get client key       
-        if (i == 3) {
+        if (i == 5) {
             memcpy(p_stored->pk, token, 8);
             p_stored->pk[8] = '\0';
 
@@ -43,7 +51,7 @@ server_error_t get_stored_parameters(char* msg, stored_data_t* p_stored)
         }
 
         // Get encrypted message size
-        if (i == 5) {
+        if (i == 7) {
             p_stored->encrypted_size = (uint32_t)strtoul(token,NULL,16);
             if(DEBUG_PRINT) printf("encrypted_size: %u\n", p_stored->encrypted_size);
         }

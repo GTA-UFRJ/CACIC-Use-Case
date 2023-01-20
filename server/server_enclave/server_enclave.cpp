@@ -126,13 +126,13 @@ sgx_status_t process_data(
     }
 
     // Verify if pks are equals
-    if(memcmp(pk, decMessage+3, 8)){
+    if(memcmp(pk, decMessage+5+20+3, 8)){
         ret = (sgx_status_t)0x5001;
         return ret;
     }
 
     // Verify if payload exists and is valid
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
     char* text = (char*)malloc(1+dec_msg_len);
     memcpy(text, decMessage, dec_msg_len);
     text[dec_msg_len] = '\0';
@@ -146,7 +146,7 @@ sgx_status_t process_data(
         i++;
         token = strtok_r(NULL, "|", &auxiliar_text);
  
-        if (i == 5) {
+        if (i == 7) {
             strtoul(token, &invalid_char, 10);
             if(*invalid_char != 0) {
                 free(text);
@@ -288,7 +288,7 @@ sgx_status_t retrieve_data(
     }
 
     // Get permissions and verify if querier is included
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
     char* text = (char*)malloc(1+(size_t)dec_msg_len);
     memcpy(text, decMessage, dec_msg_len);
     text[dec_msg_len] = '\0';
@@ -303,7 +303,7 @@ sgx_status_t retrieve_data(
         i++;
         token = strtok_r(NULL, "|", &text);
  
-        if (i == 7+2*permission_count) {
+        if (i == 9+2*permission_count) {
             if(!memcmp(token, querier_pk, 8))
                 *accepted = 1;
             permission_count++;
@@ -348,6 +348,7 @@ sgx_status_t sum_encrypted_data_s(
     sgx_sealed_data_t* storage_sealed_key,
     uint8_t** data_array,
     uint32_t data_count,
+    char* time,
     char* publisher_pk,
     uint32_t max_data_size,
     uint8_t* encrypted_result,
@@ -405,7 +406,7 @@ sgx_status_t sum_encrypted_data_s(
     }
     
     // Pick publisher access permissions
-    // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
     char access_permissions [1+publisher_data_size];
     memcpy(access_permissions, publisher_data, publisher_data_size);
     access_permissions[publisher_data_size] = 0;
@@ -413,7 +414,7 @@ sgx_status_t sum_encrypted_data_s(
     int i = 0;
     char* p_access_permissions = &access_permissions[0];
     char* token = strtok_r(p_access_permissions, "|", &p_access_permissions);
-    while (token != NULL && i<5)
+    while (token != NULL && i<7)
     {
         token = strtok_r(NULL, "|", &p_access_permissions);
         i++;
@@ -436,13 +437,13 @@ sgx_status_t sum_encrypted_data_s(
 
         i = 0;
         token = strtok_r(msg, "|", &msg);
-        while (token != NULL && i<6)
+        while (token != NULL && i<8)
         {
             i++;
             token = strtok_r(NULL, "|", &msg);
 
             // Get encrypted message size
-            if (i == 5) 
+            if (i == 7) 
                 encrypted_size = (uint32_t)strtoul(token,NULL,16);
         }
         
@@ -477,7 +478,7 @@ sgx_status_t sum_encrypted_data_s(
         if(!errogenous_data) {
 
             // Verify if publisher can access this data
-            // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+            // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
             char* p_auxiliar_client_data = (char*)malloc(1+encrypted_size-16-12);
             memcpy(p_auxiliar_client_data, client_data, encrypted_size-16-12);
             p_auxiliar_client_data[encrypted_size-16-12] = 0;
@@ -491,14 +492,14 @@ sgx_status_t sum_encrypted_data_s(
             {
                 i++;
                 token = strtok_r(NULL, "|", &p_auxiliar_client_data);
-                if (i == 7+2*permission_count) {
+                if (i == 9+2*permission_count) {
                     if(!memcmp(token, publisher_pk, 8))
                         accepted = true;
                     permission_count++;
                 }
     
                 // Save payload in memory
-                if (i == 5) {
+                if (i == 7) {
                     unsigned j=0;
                     while(token[j] != '|' && j<128) { 
                         payload[j] = token[j];
@@ -516,7 +517,6 @@ sgx_status_t sum_encrypted_data_s(
                 }
             }
             free(p_auxiliar_client_data);
-            // client_data = pk|72d41281|type|123456|payload|250|permission1|72d41281
         }
 
         // Update total
@@ -529,14 +529,17 @@ sgx_status_t sum_encrypted_data_s(
 
     // Build plaintext aggregation data
     char* aggregation_data = (char*)malloc(max_data_size);
-    char str[] = "pk|xxxxxxxx|type|555555|payload|";
-    memcpy(&str[3],publisher_pk,8);
-    memcpy(aggregation_data, &str[0], 32);
+    char str[] = "time|xxxxxxxxxxxxxxxxxxx|pk|xxxxxxxx|type|555555|payload|";
+    memcpy(&str[5],time,19);
+    memcpy(&str[28],publisher_pk,8);
+    memcpy(aggregation_data, &str[0], 57);
+
 
     std::string total_string = std::to_string(total);
-    memcpy(aggregation_data+32, total_string.c_str(), total_string.length());
-    *(aggregation_data+32+total_string.length()) = '|';
-    memcpy(aggregation_data+32+total_string.length()+1, p_access_permissions, strlen(p_access_permissions));
+    ocall_print_secret((uint8_t*)(total_string.c_str()),total_string.length());
+    memcpy(aggregation_data+57, total_string.c_str(), total_string.length());
+    *(aggregation_data+57+total_string.length()) = '|';
+    memcpy(aggregation_data+57+total_string.length()+1, p_access_permissions, strlen(p_access_permissions));
     size_t aggregation_data_size = strlen(aggregation_data);
 
     // Encrypt data using key
@@ -653,7 +656,7 @@ sgx_status_t get_db_request_s(
     }
 
     // Verify if pks are equals
-    if(memcmp(pk, publisher_data+3, 8)){
+    if(memcmp(pk, publisher_data+3+20+5, 8)){
         free(publisher_data);
         ret = (sgx_status_t)0x5001;
         return ret;
@@ -667,7 +670,7 @@ sgx_status_t get_db_request_s(
         i++;
         token = strtok_r(NULL, "|", &publisher_data_string);
 
-        if(i == 5) {
+        if(i == 7) {
             size_t db_command_size = strlen(token);
             if(db_command_size > max_db_command_size) {
                 free(publisher_data);
@@ -683,121 +686,4 @@ sgx_status_t get_db_request_s(
     return ret;
 }
 
-
-sgx_status_t revoke_data(
-    sgx_sealed_data_t* sealed_revoker_key,
-    sgx_sealed_data_t* sealed_storage_key,
-    uint8_t* encrypted_pk,
-    uint8_t* data,
-    uint32_t encrypted_data_size, 
-    char* pk,
-    uint8_t* accepted)
-{
-
-    // Verify if nonce is fresh
-    // TODO
-    
-    *accepted = 0;
-
-    sgx_status_t ret = SGX_SUCCESS;
-
-    // Unseal keys
-    uint32_t key_size = 16;
-
-    uint8_t revoker_key[16] = {0}; 
-    ret = sgx_unseal_data(sealed_revoker_key, NULL, NULL, &revoker_key[0], &key_size);
-    /*if(ret != SGX_SUCCESS) {
-        uint8_t error = (uint8_t)ret;
-        ocall_print_secret(&error, 1);
-        return ret;
-    }*/
-
-    uint8_t storage_key[16] = {0}; 
-    ret = sgx_unseal_data(sealed_storage_key, NULL, NULL, &storage_key[0], &key_size);
-    /*if(ret != SGX_SUCCESS) {
-        uint8_t error = (uint8_t)ret;
-        ocall_print_secret(&error, 1);
-        return ret;
-    }*/
-    
-    sgx_aes_gcm_128bit_key_t my_key;
-    memcpy(my_key, revoker_key, (size_t)key_size);
-    
-    sgx_aes_gcm_128bit_key_t server_key;
-    memcpy(server_key, storage_key, (size_t)key_size);
-
-    /* 
-    * Decrypt pk
-    *
-    * Encrypted data:      | MAC | IV | AES128(data)
-    * Buffer size:           16    12   size(data)
-    *
-    * MAC reference:         &data       :   &data+16
-    * IV reference:          &data+16    :   &data+16+12
-    * AES128(data) ref:      &data+12+16 : 
-    */
-    uint32_t dec_pk_size = 8; 
-    uint8_t dec_pk [dec_pk_size+1];
-    memset(dec_pk,0,dec_pk_size+1);;
-    ret = sgx_rijndael128GCM_decrypt(&my_key,
-                                    &encrypted_pk[0] + 16 + 12,
-                                    dec_pk_size,
-                                    &dec_pk[0],
-                                    &encrypted_pk[0] + 16,
-                                    12,
-                                    NULL,
-                                    0,
-                                    (const sgx_aes_gcm_128bit_tag_t*)
-                                    (&encrypted_pk[0]));
-    if(ret != SGX_SUCCESS) {
-        return ret;
-    }
-
-    // Verify if pks are equals
-    if(memcmp(pk, dec_pk, 8)){
-        ret = (sgx_status_t)0x5001;
-        return ret;
-    }
-
-    /* 
-    * Decrypt data received from DB/disk copy
-    *
-    * Encrypted data:      | MAC | IV | AES128(data)
-    * Buffer size:           16    12   size(data)
-    *
-    * MAC reference:         &data       :   &data+16
-    * IV reference:          &data+16    :   &data+16+12
-    * AES128(data) ref:      &data+12+16 : 
-    */
-    uint32_t dec_msg_len = encrypted_data_size-12-16; 
-    uint8_t decMessage [dec_msg_len];
-    memset(decMessage,0,dec_msg_len);;
-    ret = sgx_rijndael128GCM_decrypt(&server_key,
-                                    &data[0] + 16 + 12,
-                                    dec_msg_len,
-                                    &decMessage[0],
-                                    &data[0] + 16,
-                                    12,
-                                    NULL,
-                                    0,
-                                    (const sgx_aes_gcm_128bit_tag_t*)
-                                    (&data[0]));
-    if(ret != SGX_SUCCESS) {
-        return ret;
-    }
-
-    // Get permissions and verify if querier is included
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
-    
-    // Verify if client is the owner of the data
-    if(memcmp(decMessage+3, pk, 8)) {
-        ret = (sgx_status_t)0x5001;
-        return ret;
-    }
-
-    // Allow deletion
-    *accepted = 1; 
-
-    return ret;
-}
 

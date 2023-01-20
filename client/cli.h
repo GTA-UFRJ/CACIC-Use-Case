@@ -12,6 +12,7 @@
 #define _CLI_H_
 
 typedef struct client_data {
+    char time[20];
     char pk[9];
     char type[7];
     char* payload;

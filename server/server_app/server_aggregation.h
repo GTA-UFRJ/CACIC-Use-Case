@@ -33,7 +33,7 @@
 #include "sgx_tcrypto.h"
 
 
-server_error_t sum_encrypted_data_i(uint8_t*, uint32_t, uint8_t*, uint8_t*, uint8_t**, uint32_t, char*, uint8_t*, uint32_t* );
+server_error_t sum_encrypted_data_i(uint8_t*, uint32_t, uint8_t*, uint8_t*, uint8_t**, uint32_t, char*, char*, uint8_t*, uint32_t* );
 
 server_error_t get_db_request_i(iot_message_t, uint8_t*, char*);
 

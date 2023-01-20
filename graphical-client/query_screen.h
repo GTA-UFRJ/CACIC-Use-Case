@@ -12,7 +12,7 @@ class query_screen : public QDialog
     Q_OBJECT
 
 public:
-    const char type_codes[3][14] = {"123456 555555", "123456", "555555"};
+    const char type_codes[3][31] = {"type='123456' or type='555555'", "typ='123456'", "type='555555'"};
     explicit query_screen(QWidget *parent = nullptr);
     ~query_screen();
 

@@ -27,6 +27,4 @@ server_error_t database_write(sqlite3*, iot_message_t);
 
 server_error_t database_read(sqlite3*, char*, char**, uint32_t*, uint32_t*);
 
-server_error_t database_delete(sqlite3*, stored_data_t);
-
 #endif

@@ -21,15 +21,16 @@
 #include HTTPLIB_PATH
 #include "utils/encryption.h"
 
-int send_data_for_publication(char* pk, char* type, uint8_t* enc_data, uint32_t enc_data_size)
+int send_data_for_publication(char* time, char* pk, char* type, uint8_t* enc_data, uint32_t enc_data_size)
 {
     // Build publication message
-    // "http://localhost:7778/publish/size=631/pk|72d41281|type|555555|size|62|encrypted|dd-b1-b6-b8-22-d3-9a-76-..."
-    size_t header_size = 3+9+5+7+5+3+10;
+    // "http://localhost:7778/publish/size=631/time|10h20m33s|pk|72d41281|type|555555|size|62|encrypted|dd-b1-b6-b8-22-d3-9a-76-..."
+    size_t header_size = 5+20+3+9+5+7+5+3+10;
     size_t snd_msg_size = (header_size+1+3*enc_data_size)*sizeof(char);
 
     char* snd_msg = (char*)malloc(snd_msg_size);
-    sprintf(snd_msg, "pk|%s|type|%s|size|%02x|encrypted|", pk, type, (unsigned int)enc_data_size);
+    memset(snd_msg, 0, snd_msg_size);
+    sprintf(snd_msg, "time|%s|pk|%s|type|%s|size|%02x|encrypted|", time, pk, type, (unsigned int)enc_data_size);
 
     char auxiliar[4];
     for (uint32_t i=0; i<enc_data_size; i++) {
@@ -91,12 +92,13 @@ int send_data_for_publication(char* pk, char* type, uint8_t* enc_data, uint32_t 
 int client_publish(uint8_t* key, client_data_t data)
 {
     // Mount text with client data
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
-    uint32_t formatted_data_size = 3+9+5+7+8+(uint32_t)strlen(data.payload)+(13+8)*(data.permissions_count); // 56
+    // time|10h30m47s|pk|72d41281|type|123456|payload|250|permission1|72d41281
+    uint32_t formatted_data_size = 5+20+3+9+5+7+8+(uint32_t)strlen(data.payload)+(13+8)*(data.permissions_count); // 56
     char* formatted_data = (char*)malloc(sizeof(char) * (formatted_data_size+1));
     memset(formatted_data, 0, formatted_data_size+1);
-    sprintf(formatted_data,"pk|%s|type|%s|payload|%s", 
-            data.pk, data.type, data.payload);
+
+    sprintf(formatted_data,"time|%s|pk|%s|type|%s|payload|%s", 
+            data.time, data.pk, data.type, data.payload);
 
     char* permission = (char*)malloc(22);
     for(uint32_t index=0; index<data.permissions_count; index++) {
@@ -118,7 +120,7 @@ int client_publish(uint8_t* key, client_data_t data)
     }
 
     // Send data for publication
-    int send_ret = send_data_for_publication(data.pk, data.type, enc_data, enc_data_size);
+    int send_ret = send_data_for_publication(data.time, data.pk, data.type, enc_data, enc_data_size);
     free(enc_data);
     
     return send_ret;

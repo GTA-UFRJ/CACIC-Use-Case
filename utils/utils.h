@@ -41,4 +41,8 @@ bool verify_file_existance(char* );
 
 void free_permissions_array(char**, uint32_t);
 
+void gen_random_index(char* );
+
+void get_time(char* );
+
 #endif // _UTILS_H_

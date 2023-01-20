@@ -50,6 +50,7 @@ int initialize_ap_server ()
         std::string payload_field = req.matches[1].str();
         data.payload = (char*)malloc(payload_field.size()+1);
 
+        get_time(data.time);
         sprintf(data.pk, "%s", id.pk);
         sprintf(data.type, "123456");
         sprintf(data.payload, "%s", payload_field.c_str());

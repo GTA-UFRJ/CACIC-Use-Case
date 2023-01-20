@@ -12,7 +12,6 @@
 #include "client_permdb_manager.h"
 #include "client_key_manager.h"
 #include "client_publish.h"
-#include "client_revoke.h"
 #include "client_query.h"
 #include "client_apnet.h"
 #include "client_uenet.h"
@@ -33,8 +32,6 @@ void print_usage() {
     printf("./Client publish 555555 \"SELECT * from TACIOT where type='123456'\" 72d41281\n\n");
     printf("Example for querying a data using SQL command \"SELECT * from TACIOT where type='123456'\" of index 0\n");
     printf("./Client query 0 \"SELECT * from TACIOT where type='123456'\"\n\n");
-    printf("Example for revoking a data using SQL command \"SELECT * from TACIOT where type='123456'\" of index 0\n");
-    printf("./Client revoke 0 \"SELECT * from TACIOT where type='123456'\"\n\n");
     printf("Example for reading default access permissions for type='123456'\n");
     printf("./Client read_perm 123456\n\n");
     printf("Example for writing default access permissions for type='123456'\n");
@@ -65,10 +62,11 @@ int publish_interface(int argc, char** argv)
     client_identity_t id;
     if(read_identity(&id))
         return -1;
-    
+
     // Fill client data structure
     client_data_t data;
     data.payload = (char*)malloc(strlen(argv[3])+1);
+    get_time(data.time);
     sprintf(data.pk, "%s", id.pk);
     sprintf(data.type, "%s", argv[2]);
     sprintf(data.payload, "%s", argv[3]);
@@ -142,42 +140,6 @@ int query_interface(int argc, char** argv)
         queried_data[queried_data_size] = 0;
         printf("Received: %s\n", (char*)queried_data);
     }
-    return ret;
-}
-
-int revoke_interface(int argc, char** argv)
-{
-    int ret = 0;
-
-    if(argc < 4) {
-        printf("Too less arguments\n");
-        print_usage();
-        return -1;
-    }
-    else if(argc > 4) {
-        printf("Too many arguments\n");
-        print_usage();
-        return -1;
-    }
-        
-    client_identity_t id;
-    if(read_identity(&id))
-        return -1;
-
-    char* invalid_char;
-    uint32_t index = (uint32_t)strtoul(argv[2],&invalid_char,10);
-
-    if(*invalid_char != 0) {
-        printf("\nInvalid argument.\n");
-        print_usage();
-        return -1;
-    }
-
-    char* command = (char*)malloc(strlen(argv[3])+1);
-    sprintf(command, "%s", argv[3]);
-
-    ret = client_revoke(id.comunication_key, index, command, id.pk);
-    free(command);
     return ret;
 }
 
@@ -420,8 +382,6 @@ int query_interface(uint32_t index, std::string sql_statement, std::string* retu
     *returned_query = std::string((char*)queried_data);
     return 0;
 }
-
-// revoke
 
 int read_perm_interface(std::string type, std::string* returned_ids)
 {

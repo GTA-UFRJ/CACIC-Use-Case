@@ -5,11 +5,13 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "server_database_manager.h"
 #include <string.h>
 #include "config_macros.h"
 #include "utils.h"
 #include "timer.h"
+
 
 void free_callback_arg(callback_arg_t callback_arg) {
     for(unsigned i = 0; i < callback_arg.data_count; i++)
@@ -41,9 +43,9 @@ static int callback_query(void* received_from_exec, int num_columns, char** colu
         }
     }
 
-    // Pick data encrypted size
+    // Pick data encrypted size 
     char* invalid_character;
-    uint32_t encrypted_size = (uint32_t) strtoul(columns_values[2], &invalid_character, 10);
+    uint32_t encrypted_size = (uint32_t) strtoul(columns_values[4], &invalid_character, 10);
 
     if(*invalid_character != 0) {
         printf("Invalid character in size field: %c\n", *invalid_character);
@@ -51,17 +53,17 @@ static int callback_query(void* received_from_exec, int num_columns, char** colu
     }
     
     // Build the data string
-    sprintf(new_data, "type|%s|pk|%s|size|0x%02x|encrypted|", 
-            columns_values[0], columns_values[1], encrypted_size);
+    sprintf(new_data, "time|%s|type|%s|pk|%s|size|0x%02x|encrypted|", 
+            columns_values[1], columns_values[2], columns_values[3], encrypted_size);
 
     // Convert encrypted string into sequence of bytes
     char auxiliar[3];
     for (uint32_t byte_index = 0; byte_index < encrypted_size; byte_index++){
-        auxiliar[0] = columns_values[3][3*byte_index];
-        auxiliar[1] = columns_values[3][3*byte_index+1];
+        auxiliar[0] = columns_values[5][3*byte_index];
+        auxiliar[1] = columns_values[5][3*byte_index+1];
         auxiliar[2] = '\0';
         
-        new_data[44+byte_index] = (char)strtoul(auxiliar, &invalid_character, 16);
+        new_data[69+byte_index] = (char)strtoul(auxiliar, &invalid_character, 16);
         if(*invalid_character != 0) {
             printf("Invalid character in encrypted field: %c\n", *invalid_character);
             return -1;
@@ -70,7 +72,7 @@ static int callback_query(void* received_from_exec, int num_columns, char** colu
 
     // Updtae structure for next callback call
     received_from_exec_tranformed->datas[received_from_exec_tranformed->data_count] = new_data;
-    received_from_exec_tranformed->datas_sizes[received_from_exec_tranformed->data_count] = 44+encrypted_size;
+    received_from_exec_tranformed->datas_sizes[received_from_exec_tranformed->data_count] = 69+encrypted_size;
     received_from_exec_tranformed->data_count++;
     
     return 0;
@@ -91,12 +93,15 @@ server_error_t database_write(sqlite3* db, iot_message_t rcv_msg)
     }
     enc_write[3*rcv_msg.encrypted_size] = '\0';
     
+    char index[9];
+    gen_random_index(index);
+
     // Create SQL statement for inserting data into the database
-    char* insert_sql_statement = (char*)malloc((MAX_DATA_SIZE+100)*sizeof(char));
+    char* insert_sql_statement = (char*)malloc((MAX_DATA_SIZE+150)*sizeof(char));
     sprintf(insert_sql_statement, 
-    "INSERT INTO TACIOT (TYPE,PK,SIZE,ENCRYPTED) "\
-    "VALUES ('%s','%s',%u,'%s');",
-    rcv_msg.type, rcv_msg.pk, rcv_msg.encrypted_size, enc_write);
+    "INSERT INTO TACIOT (ID,TIME,TYPE,PK,SIZE,ENCRYPTED) "\
+    "VALUES ('%s','%s','%s','%s',%u,'%s');",
+    index, rcv_msg.time, rcv_msg.type, rcv_msg.pk, rcv_msg.encrypted_size, enc_write);
     
     if(DEBUG_PRINT) printf("SQL insert statement: %s\n", insert_sql_statement); 
 
@@ -112,46 +117,6 @@ server_error_t database_write(sqlite3* db, iot_message_t rcv_msg)
         
         sqlite3_close(db);
         return print_error_message(DB_INSERT_EXECUTION_ERROR);
-    }
-
-    return OK;
-}
-
-server_error_t database_delete(sqlite3* db, stored_data_t stored_message) 
-{
-    Timer t("database_delete");
-    
-    char* encrypted = (char*)malloc(3*stored_message.encrypted_size+1);
-    char auxiliar[4];
-    auxiliar[3] = 0;
-    for(unsigned i=0; i<stored_message.encrypted_size; i++) {
-        sprintf(auxiliar, "%02x-", stored_message.encrypted[i]);
-        memcpy(encrypted+3*i, auxiliar, 3);
-    }
-    encrypted[3*stored_message.encrypted_size] = 0;
-
-    // Build DB command for deletion (TYPE,PK,SIZE,ENCRYPTED)
-    char* delete_sql_statement = (char*)malloc(MAX_DATA_SIZE+100);
-    sprintf(delete_sql_statement, 
-    "DELETE from TACIOT where TYPE='%s' and PK='%s' and SIZE=%u and ENCRYPTED='%s'",
-    stored_message.type, stored_message.pk, stored_message.encrypted_size, encrypted);
-    free(encrypted);
-
-    if(DEBUG_PRINT) printf("SQL delete statement: %s\n", delete_sql_statement); 
-
-    // Execute SQL statetment for inserting data (without callback function)
-    char *error_message = 0;
-    int ret = sqlite3_exec(db, delete_sql_statement, NULL, NULL, &error_message);
-    free(delete_sql_statement);
-    
-    if(ret != SQLITE_OK ){
-        printf("SQL error: %s\n", error_message);
-
-        // Error message is allocated inside sqlite3_exec call IF ther were an error
-        sqlite3_free(error_message);
-        
-        sqlite3_close(db);
-        return DB_DELETE_EXECUTION_ERROR;
     }
 
     return OK;

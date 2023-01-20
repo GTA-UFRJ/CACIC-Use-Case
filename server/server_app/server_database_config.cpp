@@ -57,7 +57,9 @@ int configure_database(char* name){
     // Create SQL statement for creating a table
     // CREATE TABLE TACIOT (ID INT PRIMARY KEY NOT NULL, TYPE CHAR(6) NOT NULL, ...);
     std::string create_table_sql_statement_string = 
-      "CREATE TABLE TACIOT ("                           \
+      "CREATE TABLE TACIOT ("   \
+      "ID           INT PRIMARY KEY         NOT NULL,"  \
+      "TIME         CHAR(20)                NOT NULL,"  \
       "TYPE         CHAR(6)                 NOT NULL,"  \
       "PK           CHAR(8)                 NOT NULL,"  \
       "SIZE         INT                     NOT NULL,"  \

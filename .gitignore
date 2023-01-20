@@ -38,3 +38,5 @@ backup/
 .vscode/*
 .vscode
 .vscode/settings.json
+
+out.csv

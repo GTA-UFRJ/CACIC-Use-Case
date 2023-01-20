@@ -15,6 +15,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                          uint8_t* storage_key, 
                          uint8_t** data_array, 
                          uint32_t data_count, 
+                         char* time,
                          char* pk,
                          uint8_t* result,
                          uint32_t* result_size) 
@@ -43,16 +44,16 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
     if(DEBUG_PRINT) printf("%s\n", (char*)publisher_data);
 
     // Pick publisher access permissions
-    // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
     char* access_permissions = (char*)malloc(1+publisher_data_size);
     memcpy(access_permissions, publisher_data, publisher_data_size);
     access_permissions[publisher_data_size] = '\0';
     free(publisher_data);
-    
+     
     int i = 0;
     char* p_access_permissions = &access_permissions[0];
     char* token = strtok_r(p_access_permissions, "|", &p_access_permissions);
-    while (token != NULL && i<5) {
+    while (token != NULL && i<7) {
         token = strtok_r(NULL, "|", &p_access_permissions);
         i++;
     }
@@ -87,7 +88,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
         if(!errogenous_data) {
 
             // Verify if publisher can access this data
-            // pk|72d41281|type|weg_multimeter|payload|250|permission1|72d41281
+            // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
             char auxiliar_client_data [1 + stored_data.encrypted_size * sizeof(char)];
             memcpy(auxiliar_client_data, client_data, client_data_size);
             auxiliar_client_data[client_data_size] = '\0';
@@ -102,14 +103,14 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
             {
                 i++;
                 token = strtok_r(NULL, "|", &p_auxiliar_client_data);
-                if (i == 7+2*permission_count) {
+                if (i == 9+2*permission_count) {
                     if(!memcmp(token, pk, 8))
                         accepted = true;
                     permission_count++;
                 }
 
                 // Save payload in memory
-                if (i == 5) { 
+                if (i == 7) { 
 
                     unsigned j=0;
                     while(token[j] != '|' && j<MAX_PAYLOAD_SIZE) { 
@@ -141,7 +142,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
     // Build plaintext aggregation data
     *result_size = (uint32_t)MAX_DATA_SIZE*sizeof(char*);
     char* aggregation_data = (char*)malloc((size_t)*result_size);
-    sprintf(aggregation_data, "pk|%s|type|555555|payload|%lu|%s", (char*)pk, total, p_access_permissions);
+    sprintf(aggregation_data, "time|%s|pk|%s|type|555555|payload|%lu|%s",  time, (char*)pk, total, p_access_permissions);
     size_t aggregation_data_size = strlen(aggregation_data);
     free(access_permissions);
 
@@ -186,7 +187,7 @@ server_error_t get_db_request_i(iot_message_t rcv_msg, uint8_t* key, char* db_co
 
     // Verify if the client owns the key
     // Verify if pks are equals
-    if(strncmp(rcv_msg.pk, (char*)publisher_data+3, 8)){
+    if(strncmp(rcv_msg.pk, (char*)publisher_data+3+20+5, 8)){
         free(publisher_data);
         return print_error_message(AUTHENTICATION_ERROR);
     }
@@ -195,6 +196,7 @@ server_error_t get_db_request_i(iot_message_t rcv_msg, uint8_t* key, char* db_co
     if(DEBUG_PRINT) printf("%s\n", (char*)publisher_data);
 
     // Get DB request
+    // time|2012-05-06.21:47:59|pk|72d41281|type|555555|payload|250110090|permission1|72d41281
     if(DEBUG_PRINT) printf("\nSeparating DB request embeded inside decrypted message\n");
 
     int i = 0;
@@ -204,7 +206,7 @@ server_error_t get_db_request_i(iot_message_t rcv_msg, uint8_t* key, char* db_co
         i++;
         token = strtok_r(NULL, "|", &publisher_data_string);
 
-        if(i == 5) 
+        if(i == 7) 
             strcpy(db_command, token);
     }
     

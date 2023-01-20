@@ -15,7 +15,6 @@ void print_usage();
 
 int publish_interface(int agrc, char** argv);
 int query_interface(int argc, char** argv);
-int revoke_interface(int argc, char** argv);
 int read_perm_interface(int argc, char** argv );
 int write_perm_interface(int argc, char** argv );
 int register_interface(int argc, char** argv );
@@ -27,7 +26,6 @@ int ap_init_interface(int argc, char** argv );
 // Overloaded alternatives
 int publish_interface(std::string, std::string, std::string, bool);
 int query_interface(uint32_t, std::string, std::string*);
-//revoke
 int read_perm_interface(std::string, std::string *);
 int write_perm_interface(std::string, std::string);
 int register_interface(std::string, std::string);

@@ -143,13 +143,13 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
 
     // Verify if the client owns the key
     // Verify if pks are equals
-    if(strncmp(rcv_msg.pk, (char*)decrypted_data+3, 8)){
+    if(strncmp(rcv_msg.pk, (char*)decrypted_data+3+5+20, 8)){
         free(decrypted_data);
         return print_error_message(AUTHENTICATION_ERROR);
     }
 
     // Verify if payload exists and is valid
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
     char* text = (char*)malloc(1+decrypted_data_size);
     memcpy(text, decrypted_data, decrypted_data_size);
     text[decrypted_data_size] = '\0';
@@ -163,7 +163,7 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
         i++;
         token = strtok_r(NULL, "|", &auxiliar_text);
  
-        if (i == 5) {
+        if (i == 7) {
             strtoul(token, &invalid_char, 10);
             if(*invalid_char != 0) {
                 free(text);
@@ -339,6 +339,7 @@ server_error_t aggregation_s(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
             (sgx_sealed_data_t*)storage_sealed_data, 
             (uint8_t**)datas, 
             filtered_data_count,
+            rcv_msg.time,
             rcv_msg.pk,
             MAX_DATA_SIZE, 
             processed_data,
@@ -425,13 +426,14 @@ server_error_t aggregation_i(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
     }
 
     // Call function to aggregate 
-    // pk|72d41281|type|123456|payload|250110090|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250110090|permission1|72d41281
     ret = sum_encrypted_data_i(rcv_msg.encrypted,
                             rcv_msg.encrypted_size,
                             publisher_key,
                             storage_key, 
                             (uint8_t**)datas, 
-                            filtered_data_count, 
+                            filtered_data_count,
+                            rcv_msg.time, 
                             rcv_msg.pk, 
                             processed_data, 
                             p_real_size);
@@ -466,8 +468,9 @@ server_error_t aggregation(iot_message_t rcv_msg, sgx_enclave_id_t global_eid, b
 
     if(!ret) {
 
-        // Write data in file
+        // Write data in database
         iot_message_t data_for_writing;
+        memcpy(data_for_writing.time, rcv_msg.time, 20);
         memcpy(data_for_writing.pk, rcv_msg.pk, 9);
         sprintf(data_for_writing.type, "555555");
         data_for_writing.encrypted_size = real_size;    

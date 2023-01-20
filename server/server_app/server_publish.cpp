@@ -53,7 +53,7 @@ void ocall_print_aggregated(unsigned long number) {
     printf("Aggregated: %lu\n", number);
 }
 
-// pk|72d41281|type|123456|size|62|encrypted|...
+// time|12h30m57s|pk|72d41281|type|123456|size|62|encrypted|...
 server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
 {
     Timer t("parse_request");   
@@ -68,8 +68,16 @@ server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
         i++;
         token = strtok_r(NULL, "|", &msg);
 
-        // Get client key
+        // Get client time
         if (i == 1){
+            memcpy(p_rcv_msg->time, token, 19);
+            p_rcv_msg->time[19] = '\0';
+
+            if(DEBUG_PRINT) printf("time: %s\n", p_rcv_msg->time);
+        }
+
+        // Get client key
+        if (i == 3){
             memcpy(p_rcv_msg->pk, token, 8);
             p_rcv_msg->pk[8] = '\0';
 
@@ -77,7 +85,7 @@ server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
         }
 
         // Get data type
-        if (i == 3) {
+        if (i == 5) {
             memcpy(p_rcv_msg->type, token, 6);
             p_rcv_msg->type[6] = '\0';
 
@@ -85,7 +93,7 @@ server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
         }
 
         // Get encrypted message size
-        if (i == 5) {
+        if (i == 7) {
             p_rcv_msg->encrypted_size = (uint32_t)strtoul(token, &invalid_char, 16);
 
             if(*invalid_char != 0)
@@ -95,7 +103,7 @@ server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
         }
 
         // Get encrypted message
-        if (i == 7) {
+        if (i == 9) {
 
             if(DEBUG_PRINT) printf("encrypted: ");
 
@@ -167,7 +175,7 @@ server_error_t server_publish(bool secure, const Request& req, Response& res, sg
     }
  
     // Server receives and separate parameters according to Ultrlight protocol
-    // pk|72d41281|type|123456|size|62|encrypted|... 
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|size|62|encrypted|... 
     iot_message_t rcv_msg;
     ret = parse_request(snd_msg, &rcv_msg);
     free(snd_msg);

@@ -319,7 +319,7 @@ server_error_t get_response(stored_data_t stored,
     // Verify access permissions
     if(DEBUG_PRINT) printf("\nVerifying access permissions\n");
     
-    // pk|72d41281|type|123456|payload|250|permission1|72d41281
+    // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
     char* text = (char*)malloc(1+plain_data_size);
     memcpy(text, plain_data, plain_data_size);
     text[plain_data_size] = '\0';
@@ -336,7 +336,7 @@ server_error_t get_response(stored_data_t stored,
         token = strtok_r(NULL, "|", &auxiliar_text);
         printf("%s\n", token);
  
-        if (i == 7+2*permission_count) {
+        if (i == 9+2*permission_count) {
             if(!memcmp(token, rcv_msg.pk, 8))
                 *access_allowed = 1;
             permission_count++;
@@ -345,7 +345,7 @@ server_error_t get_response(stored_data_t stored,
     free(text);
 
     // Encrypt data with querier key
-    if(DEBUG_PRINT) printf("\nEncrypting data with querier pk\n");
+    if(DEBUG_PRINT) printf("\nEncrypting data with querier key\n");
 
     uint32_t response_size = stored.encrypted_size;
     if (*access_allowed) { 

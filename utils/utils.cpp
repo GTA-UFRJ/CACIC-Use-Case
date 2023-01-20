@@ -11,12 +11,13 @@
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
-#include <chrono>
 #include "sample_libcrypto.h"
 #include "config_macros.h"
 #include <unistd.h>
 #include "cli.h"
-
+#include <iostream>
+#include <chrono>
+#include <ctime> 
 
 void free_client_data(client_data_t data) {
     free(data.payload);
@@ -81,9 +82,29 @@ bool verify_file_existance(char* filename) {
 }
 
 
+void gen_random_index(char* id) 
+{
+    using namespace std::chrono;
+    long long t = time_point_cast<nanoseconds>(system_clock::now()).time_since_epoch().count();
+    
+    srand(t);
+    for(int i=0;i<8;i++) 
+        id[i] = static_cast<char>(rand()%10) + '0';
+    id[8] = '\0';
+}
 
 void free_permissions_array(char** permissions_list, uint32_t permissions_count) {
     for(unsigned i = 0; i < permissions_count; i++)
         free(permissions_list[i]);
     free(permissions_list);
+}
+
+
+void get_time(char* result) {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    tstruct = *localtime(&now);
+    strftime(result, 20, "%Y-%m-%d.%X", &tstruct);
+    result[19] = '\0';
+    printf("Current measured time: %s\n", result);
 }

@@ -95,7 +95,6 @@ Server_Cpp_Files := server/server_app/server.cpp \
 					server/server_app/server_publish.cpp \
 					server/server_app/server_register.cpp \
 					server/server_app/server_query.cpp \
-					server/server_app/server_revoke.cpp \
 					server/server_app/server_processing.cpp \
 					server/server_app/server_disk_manager.cpp \
 					server/server_app/server_aggregation.cpp \
@@ -157,7 +156,6 @@ Server_Name := Server
 Client_Cpp_Files := client/cli.cpp \
 					client/client_publish.cpp \
 					client/client_query.cpp \
-					client/client_revoke.cpp \
 					client/client_permdb_manager.cpp \
 					client/client_key_manager.cpp \
 					client/client_apnet.cpp \

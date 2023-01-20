@@ -19,7 +19,6 @@
 #include "server_publish.h"
 #include "server_query.h"
 #include "server_register.h"
-#include "server_revoke.h" 
 #include "sgx_tcrypto.h"
 #include "config_macros.h"
 #include HTTPLIB_PATH
@@ -114,27 +113,6 @@ int main (int argc, char** argv)
             res.set_content(return_message, "text/plain");
         }
         return ret;
-    });
-
-    svr.Get(R"(/revoke/size=(\d+)/(.*))", [&](const Request& req, Response& res) { 
-
-        // Simulate latency 
-        std::this_thread::sleep_for(std::chrono::milliseconds(LATENCY_MS));
-        
-        if(DEBUG_PRINT) printf("\n---------------------------------------\n");
-        if(DEBUG_PRINT) printf("Received revocation message\n");
-
-        if(server_error_t ret = server_revoke(secure, req, res, global_eid)){
-            if(DEBUG_PRINT) printf("Sending error message\n");
-
-            char return_message [3];
-            sprintf(return_message, "%02d", (int)ret);
-
-            res.set_content(return_message, "text/plain");
-            
-            return ret;
-        }
-        return OK;
     });
 
 /*
