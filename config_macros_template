@@ -8,6 +8,10 @@
 #define DEBUG_PRINT 1
 #endif
 
+#ifndef DEBUG_TIMER 
+#define DEBUG_TIMER 1
+#endif
+
 #ifndef TOKENS_PATH
 #define TOKENS_PATH "(ROOT)/server/tokens"
 #endif

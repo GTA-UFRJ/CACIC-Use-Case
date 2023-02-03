@@ -14,8 +14,7 @@
 #include "utils/encryption.h"
 #include "utils/utils.h"
 #include "errors.h"
-
-#include "timer.h"
+//#include "timer.h"
 #include "client_query.h"
 #include "config_macros.h"
 #include HTTPLIB_PATH
@@ -103,7 +102,7 @@ int send_query_message(uint32_t data_index,
     std::this_thread::sleep_for(std::chrono::milliseconds(LATENCY_MS));
 
     {
-        Timer t("communication");
+        //Timer t("communication");
         
         printf("Sent %s\n", http_request);
         auto res = cli.Get(http_request);

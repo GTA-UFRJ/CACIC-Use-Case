@@ -13,11 +13,11 @@
 
 server_error_t no_processing_s(iot_message_t rcv_msg, sgx_enclave_id_t global_eid, uint8_t* processed_data, uint32_t* p_real_size)
 {
-    Timer t("no_processing_s");
+    if(DEBUG_TIMER) Timer t("no_processing_s");
 
     // Search user file and read sealed key
     char* publisher_seal_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(publisher_seal_path, "%s/%s", SEALS_PATH, rcv_msg.pk);
+    sprintf(publisher_seal_path, "%s/ck_%s", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading publisher key file: %s\n", publisher_seal_path);
 
@@ -54,7 +54,7 @@ server_error_t no_processing_s(iot_message_t rcv_msg, sgx_enclave_id_t global_ei
     sgx_status_t sgx_status;
 
     {
-    Timer t2("process_data");
+    if(DEBUG_TIMER) Timer t2("process_data");
     if(DEBUG_PRINT) printf("\nEntering enclave for preparing data for publication\n");
 
     sgx_status = process_data(global_eid, &ecall_status,
@@ -86,11 +86,11 @@ server_error_t no_processing_s(iot_message_t rcv_msg, sgx_enclave_id_t global_ei
 
 server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, uint32_t* p_real_size)
 {
-    Timer t("no_processing_i");
+    if(DEBUG_TIMER) Timer t("no_processing_i");
 
     // Search user file and read key
     char* publihser_key_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(publihser_key_path, "%s/%s_i", SEALS_PATH, rcv_msg.pk);
+    sprintf(publihser_key_path, "%s/ck_%s_i", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading publisher key file: %s\n", publihser_key_path);
 
@@ -143,6 +143,8 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
 
     // Verify if the client owns the key
     // Verify if pks are equals
+    if(DEBUG_PRINT) printf("\nVerifiying if pks are equal\n");
+
     if(strncmp(rcv_msg.pk, (char*)decrypted_data+3+5+20, 8)){
         free(decrypted_data);
         return print_error_message(AUTHENTICATION_ERROR);
@@ -150,6 +152,8 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
 
     // Verify if payload exists and is valid
     // time|2012-05-06.21:47:59|pk|72d41281|type|123456|payload|250|permission1|72d41281
+    if(DEBUG_PRINT) printf("\nVerifiying if payload exists and is valid\n");
+
     char* text = (char*)malloc(1+decrypted_data_size);
     memcpy(text, decrypted_data, decrypted_data_size);
     text[decrypted_data_size] = '\0';
@@ -209,7 +213,7 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
 
 server_error_t no_processing(iot_message_t rcv_msg, sgx_enclave_id_t global_eid, bool secure) 
 {
-    Timer t("no_processing");
+    if(DEBUG_TIMER) Timer t("no_processing");
     server_error_t ret = OK;
 
     // Thread open dedicated database connection 
@@ -242,12 +246,12 @@ server_error_t no_processing(iot_message_t rcv_msg, sgx_enclave_id_t global_eid,
 
 server_error_t aggregation_s(sqlite3* db, iot_message_t rcv_msg, uint8_t* processed_data, sgx_enclave_id_t global_eid, uint32_t* p_real_size) 
 { 
-    Timer t("aggregation_s");
+    if(DEBUG_TIMER) Timer t("aggregation_s");
     server_error_t ret = OK;
 
     // Search user file and read sealed key
     char* publisher_seal_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(publisher_seal_path, "%s/%s", SEALS_PATH, rcv_msg.pk);
+    sprintf(publisher_seal_path, "%s/ck_%s", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading publisher key file: %s\n", publisher_seal_path);
 
@@ -285,7 +289,7 @@ server_error_t aggregation_s(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
     sgx_status_t sgx_status;
     sgx_status_t ecall_status;
     {
-    Timer t2("get_db_request_s");
+    if(DEBUG_TIMER) Timer t2("get_db_request_s");
 
     if(DEBUG_PRINT) printf("\nEntering enclave for decrypting publication message\n");
 
@@ -329,7 +333,7 @@ server_error_t aggregation_s(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
     // Call function to aggregate 
     // pk|72d41281|type|weg_multimeter|payload|250110090|permission1|72d41281
     {
-    Timer t3("sum_encrypted_data_s");
+    if(DEBUG_TIMER) Timer t3("sum_encrypted_data_s");
 
     if(DEBUG_PRINT) printf("\nEntering enclave fo aggregating data\n");
     sgx_status = sum_encrypted_data_s(global_eid, &ecall_status,
@@ -363,12 +367,12 @@ server_error_t aggregation_s(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
 
 server_error_t aggregation_i(sqlite3* db, iot_message_t rcv_msg, uint8_t* processed_data, uint32_t* p_real_size) {
 
-    Timer t("aggregation_i");
+    if(DEBUG_TIMER) Timer t("aggregation_i");
     server_error_t ret = OK;
 
     // Search user file and read key
     char* publihser_key_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(publihser_key_path, "%s/%s_i", SEALS_PATH, rcv_msg.pk);
+    sprintf(publihser_key_path, "%s/ck_%s_i", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading publisher key file: %s\n", publihser_key_path);
 
@@ -446,7 +450,7 @@ server_error_t aggregation_i(sqlite3* db, iot_message_t rcv_msg, uint8_t* proces
 
 server_error_t aggregation(iot_message_t rcv_msg, sgx_enclave_id_t global_eid, bool secure)
 {
-    Timer t("aggregation");
+    if(DEBUG_TIMER) Timer t("aggregation");
     server_error_t ret = OK;
 
     // Thread open dedicated database connection 

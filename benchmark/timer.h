@@ -13,12 +13,12 @@ class Timer {
         ~Timer();
         void Stop();
 
-        static std::vector<std::string> labels; // function names
-        static std::vector<timelist_t> times;
-        static void print_times();
-        static std::vector<unsigned> labels_occurrencies; // number of times a func is called
-        static long compute_mean(timelist_t);
-        static long compute_conf_int(timelist_t);
+        static std::vector<std::string> s_labels; // function names
+        static std::vector<timelist_t> s_times;
+        static void s_print_times();
+        static std::vector<unsigned> s_labels_occurrencies; // number of times a func is called
+        static long s_compute_mean(timelist_t);
+        static long s_compute_conf_int(timelist_t);
     
     private:
         std::string label; 

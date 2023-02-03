@@ -80,7 +80,7 @@ static int callback_query(void* received_from_exec, int num_columns, char** colu
 
 server_error_t database_write(sqlite3* db, iot_message_t rcv_msg)
 {
-    Timer t("database_write");
+    if(DEBUG_TIMER) Timer t("database_write");
 
     if(DEBUG_PRINT) printf("\nWriting to dabase\n"); 
 
@@ -124,7 +124,7 @@ server_error_t database_write(sqlite3* db, iot_message_t rcv_msg)
 
 server_error_t database_read(sqlite3* db, char* command, char** datas, uint32_t* datas_sizes, uint32_t* data_count) 
 {
-    Timer t("database_read"); 
+    if(DEBUG_TIMER) Timer t("database_read"); 
    
     if(DEBUG_PRINT) printf("\nReading from database\n");
 

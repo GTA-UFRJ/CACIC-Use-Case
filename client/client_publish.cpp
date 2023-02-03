@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <chrono>
 #include <thread>
-#include "timer.h"
+//#include "timer.h"
 #include "errors.h"
 
 #include "client_publish.h"
@@ -50,7 +50,7 @@ int send_data_for_publication(char* time, char* pk, char* type, uint8_t* enc_dat
     std::this_thread::sleep_for(std::chrono::milliseconds(LATENCY_MS));
 
     {
-        Timer t("communication");
+        //Timer t("communication");
 
         printf("Sent %s\n", http_message);
         auto res = cli.Get(http_message);

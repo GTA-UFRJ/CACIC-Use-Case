@@ -105,7 +105,7 @@ int write_identity(client_identity_t id) {
     if (file == NULL) {
         printf("\nFailed to open the key file %s\n", CLIENT_KEY_FILENAME);
         fclose(file);
-        return -1;
+        return (int)WRITE_IDENTITY_FILE_ERROR;
     }
     fwrite(id.pk, 1, 8, file);
     fwrite(id.comunication_key, 1, 16, file);

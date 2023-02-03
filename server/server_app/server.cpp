@@ -27,7 +27,7 @@
 void signal_handler (int sigNumber) 
 {
     if(sigNumber == SIGTERM || sigNumber == SIGINT) {
-        Timer::print_times();
+        Timer::s_print_times();
         exit(0);
     }
 }
@@ -125,6 +125,9 @@ int main (int argc, char** argv)
 
         // Simulate latency 
         std::this_thread::sleep_for(std::chrono::milliseconds(LATENCY_MS));
+        
+        if(DEBUG_PRINT) printf("\n---------------------------------------\n");
+        if(DEBUG_PRINT) printf("Received register message\n");
         
         if(server_error_t ret = server_register(secure, req, res, global_eid)){
             if(DEBUG_PRINT) printf("Sending error message\n");

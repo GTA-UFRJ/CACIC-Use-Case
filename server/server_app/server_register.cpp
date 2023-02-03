@@ -22,6 +22,7 @@
 #include "utils.h"
 #include "server_enclave_u.h"
 #include "errors.h"
+#include "encryption.h"
 #include HTTPLIB_PATH
 
 using namespace httplib;
@@ -29,7 +30,8 @@ using namespace httplib;
 // pk|72d41281|ck|00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00- (16 bytes of zeros, for example) 
 server_error_t parse_register(char* msg, register_message_t* p_rcv_msg)
 {
-    Timer t("parse_register");
+    if(DEBUG_TIMER) Timer t("parse_register"); 
+    if(DEBUG_PRINT) printf("\nParsing registration message fields\n");
     
     char* token = strtok_r(msg, "|", &msg);
     int i = 0;
@@ -73,7 +75,7 @@ server_error_t parse_register(char* msg, register_message_t* p_rcv_msg)
 
 server_error_t get_register_message(const Request& req, char* snd_msg, uint32_t* p_size)
 {
-    Timer t("get_register_message");
+    if(DEBUG_TIMER) Timer t("get_register_message");
     if(DEBUG_PRINT) printf("\nGetting register message fields:\n");
 
     std::string size_field = req.matches[1].str();
@@ -102,13 +104,15 @@ server_error_t get_register_message(const Request& req, char* snd_msg, uint32_t*
 
 server_error_t enclave_seal_key(register_message_t rcv_msg, sgx_enclave_id_t global_eid, char* path) 
 {
-    Timer t("enclave_seal_key");
+    if(DEBUG_TIMER) Timer t("enclave_seal_key");
 
     sgx_status_t sgx_ret = SGX_SUCCESS;
 
     // Allocate buffer for sealed data
     uint8_t *temp_sealed_buf = (uint8_t *)malloc(SEALED_SIZE);
     memset(temp_sealed_buf,0,SEALED_SIZE);
+
+    if(DEBUG_PRINT) printf("\nEntering enclave to seal key\n");
 
     // Enter enclave to seal data
     sgx_status_t retval;
@@ -117,7 +121,7 @@ server_error_t enclave_seal_key(register_message_t rcv_msg, sgx_enclave_id_t glo
             global_eid, 
             &retval, 
             temp_sealed_buf, 
-            SEALED_SIZE, 
+            SEALED_SIZE,  
             &real_sealed_size, 
             rcv_msg.ck, 
             16);
@@ -141,7 +145,7 @@ server_error_t enclave_seal_key(register_message_t rcv_msg, sgx_enclave_id_t glo
 
 server_error_t server_register(bool secure, const Request& req, Response& res, sgx_enclave_id_t global_eid) 
 {
-    Timer t("server_register");
+    if(DEBUG_TIMER) Timer t("server_register");
     server_error_t ret = OK;
 
     // Get message sent in HTTP header
@@ -164,13 +168,13 @@ server_error_t server_register(bool secure, const Request& req, Response& res, s
     if(secure == false) {
        
         // Build filename for storing client key
-        sprintf(path, "%s/%s_i", SEALS_PATH, rcv_msg.pk);
+        sprintf(path, "%s/ck_%s_i", SEALS_PATH, rcv_msg.pk);
 
         if(verify_file_existance(path) == true) {
             free(path);
             return print_error_message(ALREDY_REGISTERED_ERROR);
         }
-
+        
         ret = write_key((uint8_t*)rcv_msg.ck, 16, path);
         free(path);
         if(ret) 
@@ -181,7 +185,7 @@ server_error_t server_register(bool secure, const Request& req, Response& res, s
     else {
 
         // Build filename for storing client key
-        sprintf(path, "%s/%s", SEALS_PATH, rcv_msg.pk);
+        sprintf(path, "%s/ck_%s", SEALS_PATH, rcv_msg.pk);
 
         if(verify_file_existance(path) == true) {
             free(path);

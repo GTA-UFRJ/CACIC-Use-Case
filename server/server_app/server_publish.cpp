@@ -56,7 +56,7 @@ void ocall_print_aggregated(unsigned long number) {
 // time|12h30m57s|pk|72d41281|type|123456|size|62|encrypted|...
 server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
 {
-    Timer t("parse_request");   
+    if(DEBUG_TIMER) Timer t("parse_request");   
     if(DEBUG_PRINT) printf("\nParsing publication message fields\n");
     
     char* token = strtok_r(msg, "|", &msg);
@@ -132,7 +132,7 @@ server_error_t parse_request(char* msg, iot_message_t* p_rcv_msg)
 
 server_error_t get_publish_message(const Request& req, char* snd_msg, uint32_t* p_size)
 {
-    Timer t("get_publish_message");
+    if(DEBUG_TIMER) Timer t("get_publish_message");
     if(DEBUG_PRINT) printf("\nGetting publish message fields:\n");
 
     std::string size_field = req.matches[1].str();
@@ -161,7 +161,7 @@ server_error_t get_publish_message(const Request& req, char* snd_msg, uint32_t* 
 
 server_error_t server_publish(bool secure, const Request& req, Response& res, sgx_enclave_id_t global_eid)
 {
-    Timer t("server_publish");
+    if(DEBUG_TIMER) Timer t("server_publish");
     server_error_t ret = OK;
 
     // Get message sent in HTTP header
@@ -184,11 +184,11 @@ server_error_t server_publish(bool secure, const Request& req, Response& res, sg
 
     // Identify data type and call function to process it
     if(!strcmp(rcv_msg.type, "555555")){
-        if(DEBUG_PRINT) printf("\nAggregating\n");
+        if(DEBUG_PRINT) printf("\nAggregating:\n");
         ret = aggregation(rcv_msg, global_eid, secure); 
     }
     else {
-        if(DEBUG_PRINT) printf("\nPublishing without processing\n");
+        if(DEBUG_PRINT) printf("\nPublishing without processing:\n");
         ret = no_processing(rcv_msg, global_eid, secure); 
     }
 

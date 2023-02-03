@@ -268,6 +268,9 @@ int register_ap_interface(int argc, char** argv)
             return (int)print_error_message(KEY_REGISTRATION_ERROR);
     }
 
+    int ret = client_register(id);   
+    if(ret) return ret;
+
     return send_register_ap_message(id);
 }
 

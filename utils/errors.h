@@ -54,7 +54,8 @@ typedef enum {
     INVALID_ENCRYPTED_RESPONSE_ERROR,       // 41
     INVALID_ERROR_CODE_FORMAT_ERROR,        // 42
     AP_READ_PERMS_ERROR,                    // 43
-    OPEN_CSV_FILE_ERROR                     // 44
+    OPEN_CSV_FILE_ERROR,                    // 44
+    WRITE_IDENTITY_FILE_ERROR               // 45
 } server_error_t;
 
 std::string get_error_message(server_error_t error);

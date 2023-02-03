@@ -14,7 +14,7 @@ std::mutex thread_sync;
 
 server_error_t get_stored_parameters(char* msg, stored_data_t* p_stored)
 {
-    Timer t("get_stored_parameters");
+    if(DEBUG_TIMER) Timer t("get_stored_parameters");
 
     if(DEBUG_PRINT) printf("\nParsing stored data fields\n");
 
@@ -69,7 +69,8 @@ server_error_t get_stored_parameters(char* msg, stored_data_t* p_stored)
 
 server_error_t write_key(uint8_t* ck, uint32_t ck_size, char* filename) 
 {
-    Timer t("write_key");    
+    if(DEBUG_TIMER) Timer t("write_key");   
+    if(DEBUG_PRINT) printf("\nWriting key into file\n"); 
 
     // Avoid multiple threads writing at the same time
     thread_sync.lock();

@@ -157,6 +157,10 @@ std::string get_error_message(server_error_t error) {
         return std::string("Could not open CSV output file");
         break;
 
+        case WRITE_IDENTITY_FILE_ERROR:
+        return std::string("Could not save identity");
+        break;
+
         default:
         return std::string("Unknown error");
         break;

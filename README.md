@@ -23,7 +23,8 @@ The official documentation for installing these three resources is available at:
 After installing SGX:
 
 * Clone the following repository: https://github.com/yhirose/cpp-httplib.git
-* Install Qt GUI library. This project is compatible with version 6 or higher 
+* Install SQLite 3.
+* Install Qt GUI library. This project is compatible with version 6.
 
 * Other basic tools such as g++ compiler, Make, CMake must be necessary and can be easily installed using the default distributuion package manager
 

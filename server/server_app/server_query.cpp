@@ -37,10 +37,8 @@ using namespace httplib;
 
 server_error_t parse_query(char* msg, access_message_t* p_rcv_msg)
 {
-    Timer t("parse_query");
+    if(DEBUG_TIMER) Timer t("parse_query");
     if(DEBUG_PRINT) printf("\nParsing query message fields\n");
-
-    if(DEBUG_PRINT) printf("Parsing message fields\n");
 
     char* token = strtok_r(msg, "|", &msg);
     int i = 0;
@@ -118,7 +116,7 @@ server_error_t parse_query(char* msg, access_message_t* p_rcv_msg)
 
 server_error_t get_query_message(const Request& req, char* snd_msg, uint32_t* p_size)
 {
-    Timer t("get_query_message");
+    if(DEBUG_TIMER) Timer t("get_query_message");
     if(DEBUG_PRINT) printf("\nGetting query message fields:\n");
 
     std::string size_field = req.matches[1].str();
@@ -153,11 +151,11 @@ server_error_t enclave_get_response(stored_data_t stored,
 {
     *access_allowed = 0;
 
-    Timer t("enclave_get_response");
+    if(DEBUG_TIMER) Timer t("enclave_get_response");
 
     // Search user file and read sealed key
     char* querier_seal_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(querier_seal_path, "%s/%s", SEALS_PATH, rcv_msg.pk);
+    sprintf(querier_seal_path, "%s/ck_%s", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading querier key file: %s\n", querier_seal_path);
 
@@ -195,7 +193,7 @@ server_error_t enclave_get_response(stored_data_t stored,
 
     // Call enclave to unseal keys, decrypt with the querier key and encrypt with querier key
     {
-    Timer t2("retrieve_data");
+    if(DEBUG_TIMER) Timer t2("retrieve_data");
 
     if(DEBUG_PRINT) printf("\nEntering enclave to verify access permissions\n");
 
@@ -233,11 +231,11 @@ server_error_t get_response(stored_data_t stored,
 {
     *access_allowed = 0;
 
-    Timer t("get_response");
+    if(DEBUG_TIMER) Timer t("get_response");
 
     // Search user file and read key
     char* querier_key_path = (char*)malloc(PATH_MAX_SIZE);
-    sprintf(querier_key_path, "%s/%s_i", SEALS_PATH, rcv_msg.pk);
+    sprintf(querier_key_path, "%s/ck_%s_i", SEALS_PATH, rcv_msg.pk);
 
     if(DEBUG_PRINT) printf("\nReading querier key file: %s\n", querier_key_path);
 
@@ -334,7 +332,7 @@ server_error_t get_response(stored_data_t stored,
     {
         i++;
         token = strtok_r(NULL, "|", &auxiliar_text);
-        printf("%s\n", token);
+        //printf("%s\n", token);
  
         if (i == 9+2*permission_count) {
             if(!memcmp(token, rcv_msg.pk, 8))
@@ -365,7 +363,7 @@ server_error_t get_response(stored_data_t stored,
 
 void make_response(uint8_t* enc_data, uint32_t enc_data_size, char* response)
 {
-    Timer t("make_response");
+    if(DEBUG_TIMER) Timer t("make_response");
     sprintf(response, "size|0x%02x|data|", enc_data_size);
     char auxiliar[7];
     for (uint32_t count=0; count<enc_data_size; count++)
@@ -380,7 +378,7 @@ void make_response(uint8_t* enc_data, uint32_t enc_data_size, char* response)
 
 server_error_t server_query(bool secure, const Request& req, Response& res, sgx_enclave_id_t global_eid)
 {
-    Timer t("server_query");
+    if(DEBUG_TIMER) Timer t("server_query");
     server_error_t ret = OK;
 
     // Get message sent in HTTP header
@@ -402,7 +400,7 @@ server_error_t server_query(bool secure, const Request& req, Response& res, sgx_
     // Thread open dedicated database connection 
     sqlite3 *db;
 
-    if(DEBUG_PRINT) printf("\nOpening dabase\n"); 
+    if(DEBUG_PRINT) printf("\nOpening database\n"); 
 
     if(sqlite3_open(DATABASE_PATH, &db)) {
        printf("SQL error: %s\n", sqlite3_errmsg(db));

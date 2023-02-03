@@ -21,13 +21,13 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                          uint32_t* result_size) 
 {
 
-    Timer t("sum_encrypted_data_i");
+    if(DEBUG_TIMER) Timer t("sum_encrypted_data_i");
 
     sample_status_t encryption_ret = SAMPLE_SUCCESS;
 
     // Decrypt publisher data
 
-    if(DEBUG_PRINT) printf("\nDecrypting message\n");
+    if(DEBUG_PRINT) printf("\nDecrypting publisher message for picking access permissions\n");
 
     uint32_t publisher_data_size = MAX_DATA_SIZE;
     uint8_t* publisher_data = (uint8_t*)malloc((size_t)publisher_data_size);
@@ -62,7 +62,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
     uint8_t* client_data = (uint8_t*)malloc((size_t)client_data_size);
 
     // Iterate over data array
-    if(DEBUG_PRINT) printf("\nDecrypting collected datas\n");
+    if(DEBUG_PRINT) printf("\nDecrypting collected datas from database\n");
 
     unsigned long total = 0;
     bool errogenous_data = false;
@@ -138,6 +138,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
         client_data_size = MAX_DATA_SIZE*sizeof(uint8_t);
     }
     free(client_data);
+    if(DEBUG_PRINT) printf("\nFinished with verifiying permissions and summing payloads\n");
 
     // Build plaintext aggregation data
     *result_size = (uint32_t)MAX_DATA_SIZE*sizeof(char*);
@@ -166,10 +167,10 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
 
 server_error_t get_db_request_i(iot_message_t rcv_msg, uint8_t* key, char* db_command) {
 
-    Timer t("get_db_request_i");
+    if(DEBUG_TIMER) Timer t("get_db_request_i");
 
     // Decrypt publisher data to get the DB request
-    if(DEBUG_PRINT) printf("\nDecrypting publisher message\n");
+    if(DEBUG_PRINT) printf("\nDecrypting publisher message for picking database request inside payload\n");
 
     uint32_t publisher_data_size = MAX_DATA_SIZE;
     uint8_t* publisher_data = (uint8_t*)malloc((size_t)publisher_data_size+1);

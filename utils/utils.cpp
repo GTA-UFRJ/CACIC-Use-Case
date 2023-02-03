@@ -78,6 +78,7 @@ void free_data_array(char** datas, uint32_t* datas_sizes, uint32_t data_count) {
 }
 
 bool verify_file_existance(char* filename) {
+    if(DEBUG_PRINT) printf("\nVerifiying if file %s exists\n", filename);
     return ( access(filename, F_OK) != -1 ? true : false );
 }
 
@@ -87,9 +88,9 @@ void gen_random_index(char* id)
     using namespace std::chrono;
     long long t = time_point_cast<nanoseconds>(system_clock::now()).time_since_epoch().count();
     
-    srand(t);
+    srand((unsigned)t);
     for(int i=0;i<8;i++) 
-        id[i] = static_cast<char>(rand()%10) + '0';
+        id[i] = static_cast<char>(rand()%10 + (int)'0');
     id[8] = '\0';
 }
 

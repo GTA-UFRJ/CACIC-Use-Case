@@ -34,6 +34,7 @@
 build-graphical-client-Desktop_Qt_6_4_1_GCC_64bit-Debug/
 graphical-client/CMakeLists.txt.user
 backup/
+ESP32SMFW/wifi_info.h
 
 .vscode/*
 .vscode

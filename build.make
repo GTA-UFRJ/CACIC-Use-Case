@@ -43,7 +43,7 @@ SGX_ARCH ?= x64
 SGX_DEBUG ?= 1
 LATENCY ?= 0
 
-HTTPLIB_DIR ?= ~/cpp-httplib/
+HTTPLIB_DIR ?= ~/cpp-httplib
 export LD_LIBRARY_PATH
 
 ifeq ($(shell getconf LONG_BIT), 32)
@@ -187,7 +187,7 @@ Client_Link_Flags := -L. \
 					 -lsqlite3 \
 					 -Wl,-rpath=$(CURDIR)/sample_libcrypto \
 					 -Wl,-rpath=$(CURDIR) \
-					 -Lutils \
+					 -Lutils
 
 Client_Cpp_Objects := $(Client_Cpp_Files:.cpp=.o)
 
@@ -309,13 +309,26 @@ endif
 
 ######## Auxiliary Objects ########
 
-utils/%.o: utils/%.cpp 
-	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(Server_Cpp_Flags) -c $< -o $@
+utils/encryption.o: utils/encryption.cpp 
+	@$(CXX) -Isample_libcrypto -fPIC -Wno-attributes -Iclient/ -I. -Ibenchmark/ -c $< -o $@
+	@echo "CXX  <=  $<"
+
+utils/utils.o: utils/utils.cpp 
+	@$(CXX) -Isample_libcrypto -fPIC -Wno-attributes -Iclient/ -I. -c $< -o $@
+	@echo "CXX  <=  $<"
+
+utils/errors.o: utils/errors.cpp 
+	@$(CXX) -fPIC -Wno-attributes -c $< -o $@
+	@echo "CXX  <=  $<"
+
+utils/utils_sgx.o: utils/utils_sgx.cpp 
+	@$(CXX) -fPIC -Wno-attributes -I. -Ibenchmark/ $(SGX_COMMON_CXXFLAGS) $(Server_Cpp_Flags) -c $< -o $@
 	@echo "CXX  <=  $<"
 
 # g++ -Wall ./benchmark/timer.cpp ./benchmark/timer_influence_evaluation.cpp -o timer_test
 benchmark/timer.o: benchmark/timer.cpp
 	@$(CXX) -Wall -c $< -o $@
+	@echo "CXX  <=  $<"
 
 ######## Server Objects ########
 
@@ -339,8 +352,8 @@ $(Server_Name): server/server_app/server_enclave_u.o $(Server_Cpp_Objects)
 
 ######## Client Objects ########
 
-client/%.o: client/%.cpp
-	@$(CXX) $(SGX_COMMON_CXXFLAGS) $(Client_Cpp_Flags) -c $< -o $@
+client/%.o: client/%.cpp 
+	@$(CXX) $(Client_Cpp_Flags) -c $< -o $@
 	@echo "CXX  <=  $<"
 
 $(Client_Name): $(Client_Cpp_Objects)

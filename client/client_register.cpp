@@ -32,7 +32,7 @@ int send_registration(char* snd_msg) {
     httplib::Client cli(SERVER_URL, SERVER_PORT);
     std::this_thread::sleep_for(std::chrono::milliseconds(LATENCY_MS));
     {
-        Timer t("communication");
+        //Timer t("communication");
 
         printf("Sent %s\n", http_message);
         auto res = cli.Get(http_message);
