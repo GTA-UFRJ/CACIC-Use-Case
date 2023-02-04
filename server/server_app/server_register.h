@@ -9,7 +9,6 @@
 #define _SERVER_REGISTER_
 
 #include <stdio.h>
-#include "sample_libcrypto.h"
 #include "sgx_eid.h"
 #include "config_macros.h" 
 #include "server.h"

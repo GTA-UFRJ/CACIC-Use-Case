@@ -9,11 +9,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "sample_libcrypto.h"   
 
-sample_status_t encrypt_data (uint8_t* ,uint8_t* , uint32_t* , uint8_t* , uint32_t );
-
-sample_status_t decrypt_data (uint8_t* ,uint8_t* , uint32_t , uint8_t* , uint32_t* );
+int encrypt_data (uint8_t* ,uint8_t* , uint32_t* , uint8_t* , uint32_t );
+int decrypt_data (uint8_t* ,uint8_t* , uint32_t , uint8_t* , uint32_t* );
 
 void quick_decrypt_debug (uint8_t* , uint8_t* , uint32_t );
 

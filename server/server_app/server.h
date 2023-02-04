@@ -9,7 +9,6 @@
 #ifndef CLIENT_PK
 #define CLIENT_PK
 
-#include "sample_libcrypto.h"
 
 typedef struct sample_ec_pub_t
 {
@@ -52,9 +51,6 @@ typedef struct access_message_t
     char* command;
     uint8_t encrypted[8+16+12];
 } access_message_t;
-
-// Register shared key (not used, only for testes)
-const sample_aes_gcm_128bit_key_t sha_key[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 // Structure of the message written to database
 typedef struct stored_data_t

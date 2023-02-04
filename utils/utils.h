@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdio.h>
-#include "sample_libcrypto.h"
+//#include "sample_libcrypto.h"
 #include "cli.h"
 
 #ifndef _UTILS_H_

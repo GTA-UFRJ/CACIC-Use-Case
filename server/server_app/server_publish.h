@@ -7,7 +7,6 @@
 #ifndef _SERVER_PUBLISH_
 #define _SERVER_PUBLISH_
 
-#include "sample_libcrypto.h"
 #include "sgx_eid.h"
 #include "config_macros.h" 
 #include HTTPLIB_PATH

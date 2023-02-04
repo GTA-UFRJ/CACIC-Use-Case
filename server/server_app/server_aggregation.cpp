@@ -23,7 +23,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
 
     if(DEBUG_TIMER) Timer t("sum_encrypted_data_i");
 
-    sample_status_t encryption_ret = SAMPLE_SUCCESS;
+    int encryption_ret = 0;
 
     // Decrypt publisher data
 
@@ -36,7 +36,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                         encrypted_aggregation_msg_size, 
                         publisher_data,
                         &publisher_data_size);
-    if(encryption_ret != SAMPLE_SUCCESS) {
+    if(encryption_ret != 0) {
         free(publisher_data);
         return print_error_message(MESSAGE_DECRYPTION_ERROR);
     }
@@ -78,7 +78,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                            stored_data.encrypted_size,
                            client_data,
                            &client_data_size);
-        if(encryption_ret != SAMPLE_SUCCESS) {
+        if(encryption_ret != 0) {
             errogenous_data = true;
             print_error_message(DATA_DECRYPTION_ERROR);
         }
@@ -158,7 +158,7 @@ server_error_t sum_encrypted_data_i(uint8_t* encrypted_aggregation_msg,
                        (uint8_t*)aggregation_data,
                        (uint32_t)aggregation_data_size);
     free(aggregation_data);
-    if(encryption_ret != SAMPLE_SUCCESS) 
+    if(encryption_ret != 0) 
         return print_error_message(DATA_ENCRYPTION_ERROR);
 
     //quick_decrypt_debug(key, result, *result_size);
@@ -175,13 +175,12 @@ server_error_t get_db_request_i(iot_message_t rcv_msg, uint8_t* key, char* db_co
     uint32_t publisher_data_size = MAX_DATA_SIZE;
     uint8_t* publisher_data = (uint8_t*)malloc((size_t)publisher_data_size+1);
 
-    sample_status_t decrypt_ret = SAMPLE_SUCCESS;
-    decrypt_ret  = decrypt_data(key, 
+    int decrypt_ret  = decrypt_data(key, 
                         rcv_msg.encrypted, 
                         rcv_msg.encrypted_size, 
                         publisher_data,
                         &publisher_data_size);
-    if(decrypt_ret != SAMPLE_SUCCESS) {
+    if(decrypt_ret != 0) {
         free(publisher_data);
         return print_error_message(MESSAGE_DECRYPTION_ERROR);
     }

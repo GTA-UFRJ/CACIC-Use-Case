@@ -8,7 +8,6 @@
 #define _SERVER_QUERY_
 
 #include <stdio.h>
-#include "sample_libcrypto.h"
 #include "sgx_eid.h"
 #include "config_macros.h" 
 #include "server.h"

@@ -109,7 +109,6 @@ Server_Include_Paths := -Iutils \
 					 	-I$(SGX_SDK)/include \
 					 	-I. \
 					 	-Iclient \
-					 	-Isample_libcrypto \
 					 	-I$(HTTPLIB_DIR) \
 						-Ibenchmark
 
@@ -132,13 +131,11 @@ Server_Link_Flags := -L$(SGX_LIBRARY_PATH) \
 					 -L. \
 					 -Lserver/server/server_app \
 					 -Lutils \
-					 -Lsample_libcrypto \
 					 -l$(Urts_Library_Name) \
 					 -lsgx_ukey_exchange \
 					 -lpthread \
-					 -lsample_libcrypto \
+					 -lcrypto \
 					 -lsqlite3 \
-					 -Wl,-rpath=$(CURDIR)/sample_libcrypto \
 					 -Wl,-rpath=$(CURDIR) 
 
 ifneq ($(SGX_MODE), HW)
@@ -170,22 +167,18 @@ Client_Cpp_Files := client/cli.cpp \
 Client_Include_Paths := -I. \
 						-Iclient \
 						-Iutils \
-						-Isample_libcrypto \
 					 	-I$(HTTPLIB_DIR) \
 						-Ibenchmark
 
-Client_C_Flags := -shared -fPIC -Wno-attributes $(Client_Include_Paths) -DLATENCY_MS=$(LATENCY)
+Client_C_Flags := -fPIC -Wno-attributes $(Client_Include_Paths) -DLATENCY_MS=$(LATENCY)
 
 Client_Cpp_Flags := $(Client_C_Flags)
 
 Client_Link_Flags := -L. \
-					 -lsample_libcrypto \
-					 -Lsample_libcrypto \
+					 -lcrypto \
 					 -pthread \
-					 -l$(Urts_Library_Name) \
 					 -lpthread \
 					 -lsqlite3 \
-					 -Wl,-rpath=$(CURDIR)/sample_libcrypto \
 					 -Wl,-rpath=$(CURDIR) \
 					 -Lutils
 
@@ -310,11 +303,11 @@ endif
 ######## Auxiliary Objects ########
 
 utils/encryption.o: utils/encryption.cpp 
-	@$(CXX) -Isample_libcrypto -fPIC -Wno-attributes -Iclient/ -I. -Ibenchmark/ -c $< -o $@
+	@$(CXX) -fPIC -Wno-attributes -Iclient/ -I. -Ibenchmark/ -c $< -o $@
 	@echo "CXX  <=  $<"
 
 utils/utils.o: utils/utils.cpp 
-	@$(CXX) -Isample_libcrypto -fPIC -Wno-attributes -Iclient/ -I. -c $< -o $@
+	@$(CXX) -fPIC -Wno-attributes -Iclient/ -I. -c $< -o $@
 	@echo "CXX  <=  $<"
 
 utils/errors.o: utils/errors.cpp 

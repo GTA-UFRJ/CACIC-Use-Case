@@ -147,10 +147,9 @@ int client_query(uint8_t* key, uint8_t* data, uint32_t data_index, char* command
     uint32_t enc_pk_size = 8+12+16;
     uint8_t* enc_pk = (uint8_t*)malloc(enc_pk_size);
     memset(enc_pk,0,enc_pk_size);
-    sample_status_t ret = encrypt_data(key, enc_pk, &enc_pk_size, (uint8_t*)id, 8);
-    if(ret != SAMPLE_SUCCESS) {
+    int ret = encrypt_data(key, enc_pk, &enc_pk_size, (uint8_t*)id, 8);
+    if(ret != 0) {
         free(enc_pk);
-        printf("Error code: %d\n", (int)ret);
         return (int)print_error_message(CLIENT_ENCRYPTION_ERROR);
     }
 
@@ -169,10 +168,8 @@ int client_query(uint8_t* key, uint8_t* data, uint32_t data_index, char* command
     // Decrypt received data
     ret = decrypt_data(key, enc_message, enc_message_size, data, data_size);
     free(enc_message);
-    if(ret != SAMPLE_SUCCESS) {
-        printf("Error code: %d\n", (int)ret);
+    if(ret != 0) 
         return print_error_message(CLIENT_DECRYPTION_ERROR);
-    }
 
     return 0;
 }

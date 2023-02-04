@@ -4,111 +4,124 @@
  * Description: high level data encryption and decryption wrappers
  */
 
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#include <openssl/rand.h>
+
+#include "encryption.h"
+
 #include <stdlib.h>
 #include <stdio.h>
-#include "sample_libcrypto.h"   
-#include "encryption.h"
-#include <chrono>
 #include <string.h>
-#include "timer.h"
-#include "utils.h"
+#include <chrono>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iostream>
 
-sample_status_t encrypt_data (
+int encrypt_data (
     uint8_t* key,
     uint8_t* enc_data, 
     uint32_t* enc_data_size,  // return by reference 
     uint8_t* plain_data, 
     uint32_t plain_data_size)
-{
-    Timer t("encrypt_data");
-
-    const sample_aes_gcm_128bit_key_t formatted_key[16] = 
-    {key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7],
-     key[8], key[9], key[10],key[11],key[12],key[13],key[14],key[15]};
-    const sample_aes_gcm_128bit_key_t (*p_formatted_key)[16];
-    p_formatted_key = &formatted_key;
+{ 
+    OpenSSL_add_all_ciphers();
 
     // Encrypted data:      | MAC | IV | AES128(data)
     // Buffer size:           16    12   size(data)
     // MAC reference:         &data       :   &data+16
     // IV reference:          &data+16    :   &data+16+12
     // AES128(data) ref:      &data+12+16 : 
-    sample_status_t ret;
+    size_t mac_size = 16;
+    size_t iv_size = 12;
+    unsigned char mac[mac_size];
+    unsigned char iv[iv_size];
+
+    std::vector<unsigned char> output;
+    int actual_size = 0, final_size = 0;
 
     // Compute result size and verify if the memory will be enough for storing the result
-    uint32_t real_size = SAMPLE_AESGCM_MAC_SIZE + SAMPLE_AESGCM_IV_SIZE + plain_data_size;
+    uint32_t real_size = mac_size + iv_size + plain_data_size;
     if(*enc_data_size < real_size) 
-        return SAMPLE_ERROR_OUT_OF_MEMORY;
+        return -1;
     *enc_data_size = real_size;
-
-    // Clean result buffer
-    memset(enc_data,0,*enc_data_size);
-
+    output.resize(real_size, '\0');
+    
     // Generate nonce (initialization vector IV)
-    uint8_t iv[12];
     //srand(time(NULL));
-    for(int i=0;i<12;i++) {
+    for(int i=0;i<12;i++)
         //iv[i] = static_cast<uint8_t>(rand()%10) + 48;
         iv[i] = 0;      // use 0 for testing
-    }
-    memcpy(enc_data + SAMPLE_AESGCM_MAC_SIZE, iv, SAMPLE_AESGCM_IV_SIZE);
+    // Encrypted data: MAC | IV | AES128(data)
+    std::copy(iv, iv + iv_size, output.begin() + mac_size);
+    
+    // Create a new encryption context using the EVP_CIPHER_CTX_new function
+    EVP_CIPHER_CTX* e_ctx = EVP_CIPHER_CTX_new();
 
-    // Client encrypt data with shared key
-    ret = sample_rijndael128GCM_encrypt(
-        *p_formatted_key,                                               // 128 bits key = 16 bytes key
-        plain_data, plain_data_size,                                    // Origin + origin size
-        enc_data + SAMPLE_AESGCM_MAC_SIZE + SAMPLE_AESGCM_IV_SIZE,      // AES128(origin)
-        iv, SAMPLE_AESGCM_IV_SIZE,                                      // IV + IV size
-        NULL, 0, (sample_aes_gcm_128bit_tag_t *) (enc_data));         // MAC 
-    return ret;
+    // Perform the encryption of the plaintext
+    // Encrypted data: MAC | IV | AES128(data)
+    EVP_EncryptInit(e_ctx, EVP_aes_128_gcm(), (const unsigned char*)key, iv);
+    EVP_EncryptUpdate(e_ctx, &output[mac_size + iv_size], &actual_size, (const unsigned char*)plain_data, plain_data_size);
+    EVP_EncryptFinal(e_ctx, &output[mac_size + iv_size + actual_size], &final_size);
+    //printf("actual = %d and final = %d\n", actual_size, final_size);
+    
+    // Retrieve the authentication tag using EVP_CIPHER_CTX_ctrl function
+    EVP_CIPHER_CTX_ctrl(e_ctx, EVP_CTRL_GCM_GET_TAG, mac_size, mac);
+    std::copy(mac, mac + mac_size, output.begin());
+
+    memcpy(enc_data, output.data(), real_size);
+
+    EVP_CIPHER_CTX_free(e_ctx);
+    return 0;
 }
 
-sample_status_t decrypt_data (
+int decrypt_data (
     uint8_t* key,
     uint8_t* enc_data, 
     uint32_t enc_data_size,  
     uint8_t* plain_data, 
     uint32_t* plain_data_size) // return by reference 
 { 
-    Timer t("decrypt_data");
-
-    const sample_aes_gcm_128bit_key_t formatted_key[16] = 
-    {key[0], key[1], key[2], key[3], key[4], key[5], key[6], key[7],
-     key[8], key[9], key[10],key[11],key[12],key[13],key[14],key[15]};
-    const sample_aes_gcm_128bit_key_t (*p_formatted_key)[16];
-    p_formatted_key = &formatted_key;
+    OpenSSL_add_all_ciphers();
 
     // Encrypted data:      | MAC | IV | AES128(data)
     // Buffer size:           16    12   size(data)
     // MAC reference:         &data       :   &data+16
     // IV reference:          &data+16    :   &data+16+12
     // AES128(data) ref:      &data+12+16 : 
-    sample_status_t ret;
+    size_t mac_size = 16;
+    size_t iv_size = 12;
+    unsigned char mac[mac_size];
+    unsigned char iv[iv_size];
+    memcpy(mac, enc_data, mac_size);
+    memcpy(iv, enc_data + mac_size, iv_size);
+
+    std::vector<unsigned char> plaintext;
+    int actual_size = 0, final_size = 0;
 
     // Compute result size and verify if the memory will be enough for storing the result
-    uint32_t real_size = enc_data_size - SAMPLE_AESGCM_MAC_SIZE - SAMPLE_AESGCM_IV_SIZE;
+    uint32_t real_size = enc_data_size - mac_size - iv_size;
     if(*plain_data_size < real_size)
-        return SAMPLE_ERROR_OUT_OF_MEMORY;
+        return -1;
     *plain_data_size = real_size;
+    plaintext.resize(real_size, '\0');
 
-    // Clean result buffer
-    memset(plain_data,0,*plain_data_size);
+    // Create a new decryption context using the EVP_CIPHER_CTX_new function
+    EVP_CIPHER_CTX *d_ctx = EVP_CIPHER_CTX_new();
 
-    // MAC backup
-    uint8_t mac[SAMPLE_AESGCM_MAC_SIZE];
-    memcpy(mac, enc_data, SAMPLE_AESGCM_MAC_SIZE);
+    // Perform the decryption of the ciphertext
+    EVP_DecryptInit(d_ctx, EVP_aes_128_gcm(), (const unsigned char*)key, iv);
+    EVP_DecryptUpdate(d_ctx, &plaintext[0], &actual_size, &enc_data[mac_size+iv_size], real_size);
+    EVP_CIPHER_CTX_ctrl(d_ctx, EVP_CTRL_GCM_SET_TAG, mac_size, mac);
+    EVP_DecryptFinal(d_ctx, &plaintext[actual_size], &final_size);
 
-    // Client decrypt data with shared key
-    ret = sample_rijndael128GCM_encrypt(
-        *p_formatted_key,                                               // 128 bits key = 16 bytes key
-        enc_data + SAMPLE_AESGCM_MAC_SIZE +SAMPLE_AESGCM_IV_SIZE, 
-        *plain_data_size,                                               // Origin + origin size
-        plain_data,                                                     // AES128(origin)
-        enc_data + SAMPLE_AESGCM_MAC_SIZE, SAMPLE_AESGCM_IV_SIZE,       // IV + IV size
-        NULL, 0, (sample_aes_gcm_128bit_tag_t *) (mac));           // MAC 
+    memcpy(plain_data, plaintext.data(), real_size);
 
-    return ret;
+    EVP_CIPHER_CTX_free(d_ctx);
+    return 0;
 }
+
 
 void quick_decrypt_debug (uint8_t* key, uint8_t* enc, uint32_t enc_size) {
     uint32_t plain_size = enc_size - 12 - 16;

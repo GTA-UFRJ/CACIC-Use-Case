@@ -18,7 +18,7 @@
 #include "server_disk_manager.h"
 #include "server_database_manager.h"
 
-#include "sample_libcrypto.h"   // sample_aes_gcm_128bit_key_t
+//#include "sample_libcrypto.h"   // sample_aes_gcm_128bit_key_t
 #include "config_macros.h"      // ULTRALIGH_SAMPLE
 #include "utils_sgx.h"
 #include "utils.h"
@@ -255,13 +255,12 @@ server_error_t get_response(stored_data_t stored,
 
     uint32_t recovered_pk_size = 8;
     uint8_t* recovered_pk = (uint8_t*)malloc(1+recovered_pk_size*sizeof(uint8_t));
-    sample_status_t encryption_ret;
-    encryption_ret = decrypt_data(querier_key,
+    int encryption_ret = decrypt_data(querier_key,
                        rcv_msg.encrypted,
                        8+12+16,
                        recovered_pk,
                        &recovered_pk_size);
-    if(encryption_ret != SAMPLE_SUCCESS) {
+    if(encryption_ret != 0) {
         free(recovered_pk);
         return print_error_message(MESSAGE_DECRYPTION_ERROR);
     }
@@ -305,7 +304,7 @@ server_error_t get_response(stored_data_t stored,
                        plain_data,
                        &plain_data_size);
     free(storage_key);
-    if(encryption_ret != SAMPLE_SUCCESS) {
+    if(encryption_ret != 0) {
         free(querier_key);
         free(plain_data);
         return print_error_message(DATA_DECRYPTION_ERROR);
@@ -355,7 +354,7 @@ server_error_t get_response(stored_data_t stored,
     }
     free(querier_key);
     free(plain_data);
-    if(encryption_ret != SAMPLE_SUCCESS)
+    if(encryption_ret != 0)
         return print_error_message(MESSAGE_ENCRYPTION_ERROR);
 
     return (*access_allowed ? OK : ACCESS_DENIED);

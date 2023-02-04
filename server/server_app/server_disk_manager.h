@@ -13,7 +13,6 @@
 #include <stdio.h>
 #include <stdint.h>
 
-#include "sample_libcrypto.h"   // sample_aes_gcm_128bit_key_t
 #include "server.h"
 #include "timer.h"
 

@@ -30,6 +30,7 @@ server_error_t no_processing_s(iot_message_t rcv_msg, sgx_enclave_id_t global_ei
     uint8_t* publisher_sealed_data = (uint8_t*)malloc(publisher_sealed_size);
     fread(publisher_sealed_data,1,publisher_sealed_size,publisher_seal_file);
     fclose(publisher_seal_file);
+    //debug_print_encrypted(publisher_sealed_size, publisher_sealed_data);
 
     // Search server file and read sealed key
     char* storage_seal_path = (char*)malloc(PATH_MAX_SIZE);
@@ -66,7 +67,7 @@ server_error_t no_processing_s(iot_message_t rcv_msg, sgx_enclave_id_t global_ei
         processed_data,                             //data for being published
         (uint32_t)RESULT_MAX_SIZE,                  //buffer max size with data for publication
         p_real_size                                 //data real size           
-    );
+    ); 
 
     if(DEBUG_PRINT) printf("Exiting enclave\n");
 
@@ -128,18 +129,18 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
     uint32_t decrypted_data_size = MAX_DATA_SIZE;
     uint8_t* decrypted_data = (uint8_t*)malloc(decrypted_data_size);
 
-    sample_status_t encryption_ret; 
-    encryption_ret = decrypt_data(publisher_key,
+    int encryption_ret = decrypt_data(publisher_key,
                        rcv_msg.encrypted,
                        rcv_msg.encrypted_size,
                        decrypted_data,
                        &decrypted_data_size);
     free(publisher_key);
-    if(encryption_ret != SAMPLE_SUCCESS) {
+    if(encryption_ret != 0) {
         free(storage_key);
         free(decrypted_data);
         return print_error_message(MESSAGE_DECRYPTION_ERROR);
     }
+    
 
     // Verify if the client owns the key
     // Verify if pks are equals
@@ -192,7 +193,7 @@ server_error_t no_processing_i(iot_message_t rcv_msg, uint8_t* processed_data, u
                        decrypted_data_size);
     free(storage_key);
     free(decrypted_data);
-    if(encryption_ret != SAMPLE_SUCCESS) {
+    if(encryption_ret != 0) {
         free(encrypted_data);
         return print_error_message(DATA_ENCRYPTION_ERROR);
     }

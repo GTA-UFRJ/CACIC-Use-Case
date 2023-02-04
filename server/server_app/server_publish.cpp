@@ -20,7 +20,7 @@
 #include "server_processing.h"
 #include "server_disk_manager.h"
 
-#include "sample_libcrypto.h"   // sample_aes_gcm_128bit_key_t
+
 #include "config_macros.h"      // ULTRALIGH_SAMPLE
 #include "utils_sgx.h"
 #include "utils.h"

@@ -66,6 +66,8 @@ sgx_status_t process_data(
 {
     sgx_status_t ret = SGX_SUCCESS;
 
+    //ocall_print_secret((uint8_t*)publisher_sealed_key, 576);
+
     // Unseal keys
     uint8_t publisher_key[16] = {0}; 
     uint32_t publisher_key_size = 16;
@@ -88,13 +90,20 @@ sgx_status_t process_data(
         return ret;
     }*/
 
+    /*
+    uint8_t storage_key[16] = {0}; 
+    uint32_t storage_key_size = 16;
+    sgx_unseal_data((sgx_sealed_data_t *)sealed_buffer, NULL, NULL, &storage_key[0], &storage_key_size);
+    ocall_print_secret((uint8_t*)storage_key, storage_key_size);
+    */
+
     sgx_aes_gcm_128bit_key_t my_key;
     memcpy(my_key, publisher_key, (size_t)publisher_key_size);
-    //ocall_print_secret(&key[0], 16);
+    ocall_print_secret(&publisher_key[0], 16);
 
     sgx_aes_gcm_128bit_key_t server_key;
     memcpy(server_key, storage_key, (size_t)storage_key_size);
-    //ocall_print_secret(&key[0], 16);
+    ocall_print_secret(&storage_key[0], 16);
 
     /* 
     * Decrypt data using key
@@ -588,6 +597,8 @@ sgx_status_t sealing_data(
         return SGX_ERROR_INVALID_PARAMETER;
 
     sgx_status_t err = sgx_seal_data(0, NULL, data_size, data, *real_sealed_size, (sgx_sealed_data_t *)sealed_buffer);
+    //ocall_print_secret(sealed_buffer, *real_sealed_size);
+
 /*
     uint8_t original[16];
     uint32_t original_size = 16;
@@ -595,6 +606,7 @@ sgx_status_t sealing_data(
     err = sgx_unseal_data((sgx_sealed_data_t *)sealed_buffer, NULL, NULL, original, &original_size);
     ocall_print_secret((uint8_t*)original, original_size);
 */
+
     return err;
 }
 

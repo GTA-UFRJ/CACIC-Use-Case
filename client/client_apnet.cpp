@@ -16,9 +16,6 @@
 #include "utils.h"
 #include "errors.h"
 
-// Secret key for encryption
-//uint8_t global_key[16] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
-
 int initialize_ap_server ()
 {
     int ret = 0;

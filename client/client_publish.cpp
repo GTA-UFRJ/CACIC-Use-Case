@@ -16,7 +16,7 @@
 
 #include "client_publish.h"
 
-#include "sample_libcrypto.h"   
+//#include "sample_libcrypto.h"   
 #include "config_macros.h"        
 #include HTTPLIB_PATH
 #include "utils/encryption.h"
@@ -111,10 +111,9 @@ int client_publish(uint8_t* key, client_data_t data)
     uint32_t enc_data_size = MAX_ENC_DATA_SIZE;
     uint8_t* enc_data = (uint8_t *) malloc(enc_data_size*sizeof(uint8_t));
 
-    sample_status_t ret = encrypt_data(key, enc_data, &enc_data_size, (uint8_t*)formatted_data, formatted_data_size);
+    int ret = encrypt_data(key, enc_data, &enc_data_size, (uint8_t*)formatted_data, formatted_data_size);
     free(formatted_data);
-    if(ret != SAMPLE_SUCCESS) {
-        printf("Error code: %d\n", (int)ret);
+    if(ret != 0) {
         free(enc_data);
         return (int)print_error_message(CLIENT_ENCRYPTION_ERROR);
     }
