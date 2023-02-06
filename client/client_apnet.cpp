@@ -60,11 +60,13 @@ int initialize_ap_server ()
             sprintf(return_message, "%02d", (int)OPEN_DATABASE_ERROR);
             res.set_content(return_message, "text/plain");
 
+            free(data.payload);
             return (int)print_error_message(OPEN_DATABASE_ERROR);
         }
         
         data.permissions_list = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
         ret = read_default_perms(db, data.type,  data.permissions_list, &data.permissions_count);
+        sqlite3_close(db);
         if(ret) {
             free_client_data(data);
 
@@ -175,6 +177,7 @@ int initialize_ap_server ()
 
         // Write access permissions for type in database
         ret = write_default_perms(db, rcv_perms.type, rcv_perms.permissions_list, rcv_perms.permissions_count);
+        sqlite3_close(db);
         free_permissions_array(rcv_perms.permissions_list, rcv_perms.permissions_count);
 
         // Send response
@@ -230,6 +233,7 @@ int initialize_ap_server ()
         char** permissions = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
         uint32_t permissions_count;
         ret = read_default_perms(db, type, permissions, &permissions_count);
+        sqlite3_close(db);
         if(ret) {
             free_permissions_array(permissions, permissions_count);
 

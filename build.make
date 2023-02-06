@@ -161,8 +161,7 @@ Client_Cpp_Files := client/cli.cpp \
 					client/client_generic_interface.cpp \
 					utils/utils.cpp \
 					utils/encryption.cpp \
-					utils/errors.cpp \
-					benchmark/timer.cpp
+					utils/errors.cpp 
 
 Client_Include_Paths := -I. \
 						-Iclient \

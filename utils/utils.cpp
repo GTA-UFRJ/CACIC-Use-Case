@@ -100,7 +100,6 @@ void free_permissions_array(char** permissions_list, uint32_t permissions_count)
     free(permissions_list);
 }
 
-
 void get_time(char* result) {
     time_t     now = time(0);
     struct tm  tstruct;

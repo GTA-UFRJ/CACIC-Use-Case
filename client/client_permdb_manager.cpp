@@ -188,7 +188,6 @@ int read_default_perms(sqlite3* db, char* type, char** permissions_list, uint32_
         // Error message is allocated inside sqlite3_exec call IF ther were an error
         sqlite3_free(error_message);
         
-        sqlite3_close(db);
         free_callback_arg(passed_to_callback);
 
         return (int)print_error_message(DB_SELECT_EXECUTION_ERROR);
@@ -234,8 +233,6 @@ int write_default_perms(sqlite3* db, char* type, char** permissions_list, uint32
         // Error message is allocated inside sqlite3_exec call IF ther were an error
         sqlite3_free(error_message);
         
-        sqlite3_close(db);
-
         return (int)print_error_message(DB_SELECT_EXECUTION_ERROR);
     }
 

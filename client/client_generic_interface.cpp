@@ -81,6 +81,7 @@ int publish_interface(int argc, char** argv)
         
         data.permissions_list = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
         ret = read_default_perms(db, argv[2],  data.permissions_list, &data.permissions_count);
+        sqlite3_close(db);
         if(ret) {
             free_client_data(data);
             printf("Error reading permissions from database\n");
@@ -164,6 +165,7 @@ int read_perm_interface(int argc, char** argv)
     char** permissions = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
     uint32_t permissions_count;
     ret = read_default_perms(db, argv[2],  permissions, &permissions_count);
+    sqlite3_close(db);
     if(ret) {
         free_permissions_array(permissions, permissions_count);
         printf("Error reading from database\n");
@@ -205,6 +207,7 @@ int write_perm_interface(int argc, char** argv)
 
     // Write access permissions for type in database
     ret = write_default_perms(db, argv[2],  permissions, permissions_count);
+    sqlite3_close(db);
     free_permissions_array(permissions, permissions_count);
     return ret;
 }
@@ -400,6 +403,7 @@ int read_perm_interface(std::string type, std::string* returned_ids)
     char** permissions = (char**)malloc(MAX_NUM_PERMISSIONS*sizeof(char*));
     uint32_t permissions_count;
     int ret = read_default_perms(db, (char*)(type.c_str()),  permissions, &permissions_count);
+    sqlite3_close(db);
     if(ret) {
         free_permissions_array(permissions, permissions_count);
         printf("Error reading from database\n");
